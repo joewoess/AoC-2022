@@ -6,8 +6,8 @@ public static class Puzzles
     public static IPuzzle? GetPuzzle(Type targetType)
     {
         var filename = Path.Combine(Config.IsDemo
-        ? Config.InputPathReal
-        : Config.InputPathDemo, targetType.Name.ToLower() + ".txt");
+        ? Config.InputPathDemo
+        : Config.InputPathReal, targetType.Name.ToLower() + ".txt");
         
         Printer.DebugMsg($"Reading input from {filename}");
         return (IPuzzle?)Activator.CreateInstance(targetType, filename);
