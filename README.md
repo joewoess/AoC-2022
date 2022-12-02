@@ -11,7 +11,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 | Day | Challenge | C# | F# | Kotlin | Rust | Python |
 | ---: |:---------| :-------:| :-------:| :-------:| :-------:| :-------:|
 |  1  | [Calorie Counting](https://adventofcode.com/2022/day/1) | [Csharp](src/aoc-csharp/puzzles/Day01.cs) | FSharp | Kotlin | Rust | Python
-|  2  | [Challenge 02](https://adventofcode.com/2022/day/2)  | Csharp | FSharp | Kotlin | Rust | Python
+|  2  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  | [Csharp](src/aoc-csharp/puzzles/Day02.cs) | FSharp | Kotlin | Rust | Python
 |  3  | [Challenge 03](https://adventofcode.com/2022/day/3)  | Csharp | FSharp | Kotlin | Rust | Python
 |  4  | [Challenge 04](https://adventofcode.com/2022/day/4)  | Csharp | FSharp | Kotlin | Rust | Python
 |  5  | [Challenge 05](https://adventofcode.com/2022/day/5)  | Csharp | FSharp | Kotlin | Rust | Python
