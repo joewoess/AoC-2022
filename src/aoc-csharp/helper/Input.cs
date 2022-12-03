@@ -6,18 +6,18 @@ public static class Input
         return Config.IsDemo ? Config.InputPathDemo : Config.InputPathReal;
     }
 
-    public static string GetInputPath(string day)
+    public static string GetInputPath(string typeName)
     {
-        return $"{GetInputPath()}Day {day}.txt";
+        return Path.Combine(GetInputPath(), typeName.ToLower() + ".txt");
     }
 
-    public static string GetInput(string day)
+    public static string GetInput(this IPuzzle impl)
     {
-        return File.ReadAllText(GetInputPath(day));
+        return File.ReadAllText(GetInputPath(impl.GetType().Name));
     }
 
-    public static string[] GetInputLines(string day)
+    public static string[] GetInputLines(this IPuzzle impl)
     {
-        return File.ReadAllLines(GetInputPath(day));
+        return File.ReadAllLines(GetInputPath(impl.GetType().Name));
     }
 }

@@ -1,15 +1,8 @@
 namespace aoc_csharp.puzzles;
 
-public class Day01 : IPuzzle
+public class Day01 : PuzzleBaseLines
 {
-    private readonly string[] _input;
-
-    public Day01(string filename)
-    {
-        _input = File.ReadAllLines(filename);
-    }
-
-    public string? FirstPuzzle()
+    public override string? FirstPuzzle()
     {
         var sum = 0;
         List<int> numbers = new List<int>();
@@ -33,7 +26,7 @@ public class Day01 : IPuzzle
         return maxCalories.ToString();
     }
 
-    public string? SecondPuzzle()
+    public override string? SecondPuzzle()
     {
         var sum = 0;
         List<int> numbers = new List<int>();

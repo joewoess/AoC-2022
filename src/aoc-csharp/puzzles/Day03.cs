@@ -1,16 +1,8 @@
 namespace aoc_csharp.puzzles;
 
-public class Day03 : IPuzzle
+public class Day03 : PuzzleBaseLines
 {
-    private readonly string[] _input;
-
-    public Day03(string filename)
-    {
-        _input = File.ReadAllLines(filename);
-
-    }
-
-    public string? FirstPuzzle()
+    public override string? FirstPuzzle()
     {
         var score = 0;
         // Compartments A and B are split in the middle of a line
@@ -38,10 +30,10 @@ public class Day03 : IPuzzle
         return score.ToString();
     }
 
-    public string? SecondPuzzle()
+    public override string? SecondPuzzle()
     {
         var score = 0;
-        // Groups of 3 lines are in the saame group
+        // Groups of 3 lines have a common badge 
         var rucksackGroups = _input.Chunk(3).ToList();
         foreach (var group in rucksackGroups)
         {

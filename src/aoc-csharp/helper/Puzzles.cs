@@ -5,12 +5,7 @@ public static class Puzzles
     /** Instance the type found by reflection */
     public static IPuzzle? GetPuzzle(Type targetType)
     {
-        var filename = Path.Combine(Config.IsDemo
-        ? Config.InputPathDemo
-        : Config.InputPathReal, targetType.Name.ToLower() + ".txt");
-        
-        Printer.DebugMsg($"Reading input from {filename}");
-        return (IPuzzle?)Activator.CreateInstance(targetType, filename);
+        return (IPuzzle?)Activator.CreateInstance(targetType);
     }
 
     /** Gets all implementations in the csharp.impl folder */

@@ -1,6 +1,6 @@
 namespace aoc_csharp.puzzles;
 
-public class Day02 : IPuzzle
+public class Day02 : PuzzleBaseLines
 {
     /**
       * A = Rock
@@ -15,15 +15,8 @@ public class Day02 : IPuzzle
       * Draw = 3pt
       * Win = 6pt
     */
-    private readonly string[] _input;
 
-    public Day02(string filename)
-    {
-        _input = File.ReadAllLines(filename);
-
-    }
-
-    public string? FirstPuzzle()
+    public override string? FirstPuzzle()
     {
         /**
           * X = Rock
@@ -71,7 +64,7 @@ public class Day02 : IPuzzle
         return score.ToString();
     }
 
-    public string? SecondPuzzle()
+    public override string? SecondPuzzle()
     {
         /**
           * X = Loss
