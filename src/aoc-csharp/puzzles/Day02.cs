@@ -1,6 +1,6 @@
 namespace aoc_csharp.puzzles;
 
-public class Day02 : PuzzleBaseLines
+public sealed class Day02 : PuzzleBaseLines
 {
     /**
       * A = Rock

@@ -1,6 +1,6 @@
 namespace aoc_csharp.puzzles;
 
-public class Day03 : PuzzleBaseLines
+public sealed class Day03 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
