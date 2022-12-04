@@ -119,7 +119,7 @@ public static class Grids
     }
     
     /** Returns an enumerable of ints between from and to counting down if needed */
-    private static IEnumerable<int> Range(int from, int to)
+    public static IEnumerable<int> Range(int from, int to)
     {
         return from > to
             ? Enumerable.Range(to, from - to + 1)
