@@ -14,7 +14,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 |  2  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  | [Csharp](src/aoc-csharp/puzzles/Day02.cs) | FSharp | Kotlin | Rust | Python
 |  3  | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  | [Csharp](src/aoc-csharp/puzzles/Day03.cs) | FSharp | Kotlin | Rust | Python
 |  4  | [Camp Cleanup](https://adventofcode.com/2022/day/4)  | [Csharp](src/aoc-csharp/puzzles/Day04.cs) | FSharp | Kotlin | Rust | Python
-|  5  | [Challenge 05](https://adventofcode.com/2022/day/5)  | Csharp | FSharp | Kotlin | Rust | Python
+|  5  | [Supply Stacks](https://adventofcode.com/2022/day/5)  | [Csharp](src/aoc-csharp/puzzles/Day05.cs) | FSharp | Kotlin | Rust | Python
 |  6  | [Challenge 06](https://adventofcode.com/2022/day/6)  | Csharp | FSharp | Kotlin | Rust | Python
 |  7  | [Challenge 07](https://adventofcode.com/2022/day/7)  | Csharp | FSharp | Kotlin | Rust | Python
 |  8  | [Challenge 08](https://adventofcode.com/2022/day/8)  | Csharp | FSharp | Kotlin | Rust | Python
