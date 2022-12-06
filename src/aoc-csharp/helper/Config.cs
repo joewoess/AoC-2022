@@ -25,6 +25,7 @@ Written in C# 11 / .NET 7";
     //Constants
 
     public const int SolutionPadding = 10;
+    public const int MaxChallengeDays = 25;
     public const char SeparatorChar = '-';
     public const string ImplementationNamespace = "aoc_csharp.puzzles";
 

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>aoc_fsharp</RootNamespace>
+  </PropertyGroup>
+
+<ItemGroup>
+    <Compile Include="helper\Literals.fs" />
+    <Compile Include="helper\Debug.fs" />
+    <Compile Include="helper\Types.fs" />
+    <Compile Include="helper\Records.fs" />
+    <Compile Include="helper\Util.fs" />
+    <Compile Include="helper\Printing.fs" />
+    <Compile Include="helper\Reflection.fs" />
+    <Compile Include="puzzles\Day*.fs" />
+    <!-- Needs to be last -->
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+</Project>
