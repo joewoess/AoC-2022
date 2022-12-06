@@ -10,8 +10,8 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 
 | Day | Challenge | C# | F# | Kotlin | Rust | Python |
 | ---: |:---------| :-------:| :-------:| :-------:| :-------:| :-------:|
-|  1  | [Calorie Counting](https://adventofcode.com/2022/day/1) | [Csharp](src/aoc-csharp/puzzles/Day01.cs) | FSharp | Kotlin | Rust | Python
-|  2  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  | [Csharp](src/aoc-csharp/puzzles/Day02.cs) | FSharp | Kotlin | Rust | Python
+|  1  | [Calorie Counting](https://adventofcode.com/2022/day/1) | [Csharp](src/aoc-csharp/puzzles/Day01.cs) | [FSharp](src/aoc-fsharp/puzzles/Day01.fs) | Kotlin | Rust | Python
+|  2  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  | [Csharp](src/aoc-csharp/puzzles/Day02.cs) | [FSharp](src/aoc-fsharp/puzzles/Day02.fs) | Kotlin | Rust | Python
 |  3  | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  | [Csharp](src/aoc-csharp/puzzles/Day03.cs) | FSharp | Kotlin | Rust | Python
 |  4  | [Camp Cleanup](https://adventofcode.com/2022/day/4)  | [Csharp](src/aoc-csharp/puzzles/Day04.cs) | FSharp | Kotlin | Rust | Python
 |  5  | [Supply Stacks](https://adventofcode.com/2022/day/5)  | [Csharp](src/aoc-csharp/puzzles/Day05.cs) | FSharp | Kotlin | Rust | Python
