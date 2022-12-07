@@ -16,7 +16,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 |  4  | [Camp Cleanup](https://adventofcode.com/2022/day/4)  | [Csharp](src/aoc-csharp/puzzles/Day04.cs) | FSharp | Kotlin | Rust | Python
 |  5  | [Supply Stacks](https://adventofcode.com/2022/day/5)  | [Csharp](src/aoc-csharp/puzzles/Day05.cs) | FSharp | Kotlin | Rust | Python
 |  6  | [Tuning Trouble](https://adventofcode.com/2022/day/6)  | [Csharp](src/aoc-csharp/puzzles/Day06.cs) | FSharp | Kotlin | Rust | Python
-|  7  | [Challenge 07](https://adventofcode.com/2022/day/7)  | Csharp | FSharp | Kotlin | Rust | Python
+|  7  | [No Space Left On Device](https://adventofcode.com/2022/day/7)  | [Csharp](src/aoc-csharp/puzzles/Day07.cs) | FSharp | Kotlin | Rust | Python
 |  8  | [Challenge 08](https://adventofcode.com/2022/day/8)  | Csharp | FSharp | Kotlin | Rust | Python
 |  9  | [Challenge 09](https://adventofcode.com/2022/day/9)  | Csharp | FSharp | Kotlin | Rust | Python
 | 10  | [Challenge 10](https://adventofcode.com/2022/day/10) | Csharp | FSharp | Kotlin | Rust | Python

@@ -1,8 +1,4 @@
 using aoc_csharp;
-public readonly record struct Point(int X, int Y)
-{
-    public override string ToString() => $"({X},{Y})";
-}
 
 public interface IPuzzle
 {
@@ -33,4 +29,9 @@ public abstract class PuzzleBaseText : IPuzzle
     }
     public abstract string? FirstPuzzle();
     public abstract string? SecondPuzzle();
+}
+
+public readonly record struct Point(int X, int Y)
+{
+    public override string ToString() => $"({X},{Y})";
 }
