@@ -15,7 +15,8 @@ public sealed class Day09 : PuzzleBaseLines
         var startingPoint = new Point(0, 0);
         var headPoint = startingPoint;
         var tailPoint = startingPoint;
-        var fieldsVisitedByTail = new Dictionary<Point, bool>() {
+        var fieldsVisitedByTail = new Dictionary<Point, bool>()
+        {
             [startingPoint] = true
         };
 
@@ -54,7 +55,8 @@ public sealed class Day09 : PuzzleBaseLines
         Printer.DebugMsg($"There are {instructions.Length} instructions.");
 
         var startingPoint = new Point(0, 0);
-        var fieldsVisitedByTail = new Dictionary<Point, bool>() {
+        var fieldsVisitedByTail = new Dictionary<Point, bool>()
+        {
             [startingPoint] = true
         };
         var rope = new Point[10];
@@ -69,17 +71,15 @@ public sealed class Day09 : PuzzleBaseLines
             {
                 var nextRope = rope.ToArray();
                 nextRope[0] = rope[0].StepInDirection(dir);
-                for (var idx = 1; idx < rope.Length; idx++)
-                {
-                    if (!nextRope[idx - 1].IsNeighborPoint(rope[idx]))
-                    {
-                        nextRope[idx] = rope[idx].StepTowards(nextRope[idx - 1]);
-                    }
-                }
+                Grids.Range(1, rope.Length - 1)
+                    .Where(idx => !nextRope[idx - 1].IsNeighborPoint(rope[idx]))
+                    .ToList()
+                    .ForEach(idx => nextRope[idx] = rope[idx].StepTowards(rope[idx - 1]));
                 rope = nextRope;
                 fieldsVisitedByTail[rope[^1]] = true;
             }
-            if(Config.IsDebug) {
+            if (Config.IsDebug)
+            {
                 var currentRope = new Dictionary<Point, char>();
                 currentRope[startingPoint] = 's';
                 foreach (var (point, idx) in rope.Select((knot, idx) => (knot, idx)).Reverse())
