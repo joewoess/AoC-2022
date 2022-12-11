@@ -9,29 +9,27 @@ public sealed class Day11 : PuzzleBaseLines
         var monkeys = _input
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Chunk(6)
-            .Select(ParseMonkeyInput)
+            .Select(Monkey.ParseMonkeyInput)
             .ToArray();
-
         Printer.DebugMsg($"There are {monkeys.Length} monkeys.");
 
-        var inspections = new Dictionary<ushort, uint>();
+        var inspections = new Dictionary<int, int>();
         Array.ForEach(monkeys, monkey => inspections.Add(monkey.NumOfMonkey, 0));
 
-        var targetRounds = 20;
-        var numRounds = Grids.Range(1, targetRounds).ToArray();
+        var numRounds = Grids.Range(1, 20);
 
         foreach (var _ in numRounds)
         {
             foreach (var monkey in monkeys)
             {
-                while (monkey.StartingItems.Count > 0)
+                while (monkey.Items.Count > 0)
                 {
                     inspections[monkey.NumOfMonkey]++;
-                    var worryLevel = monkey.StartingItems.Dequeue();
+                    var worryLevel = monkey.Items.Dequeue();
                     worryLevel = monkey.Operation(worryLevel);
-                    worryLevel = Monkey.ReducedWorryLevel(worryLevel);
+                    worryLevel = Monkey.ReduceWorryLevelDefault(worryLevel);
 
-                    monkeys[monkey.GetTargetByWorryLevel(worryLevel)].StartingItems.Enqueue(worryLevel);
+                    monkeys[monkey.GetTargetByWorryLevel(worryLevel)].Items.Enqueue(worryLevel);
                 }
             }
         }
@@ -48,37 +46,35 @@ public sealed class Day11 : PuzzleBaseLines
         var monkeys = _input
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Chunk(6)
-            .Select(ParseMonkeyInput)
+            .Select(Monkey.ParseMonkeyInput)
             .ToArray();
 
-        var inspections = new Dictionary<ushort, uint>();
+        var inspections = new Dictionary<int, int>();
         Array.ForEach(monkeys, monkey => inspections.Add(monkey.NumOfMonkey, 0));
 
-        var minDivider = monkeys.Select(m => m.TestDivisor).Aggregate((a, b) => a * b);
+        var numRounds = Grids.Range(1, 10_000);
+        var commonDivisor = monkeys.Select(monkey => monkey.TestDivisor).Aggregate((a, b) => a * b);
 
-        const int targetRounds = 10_000;
 
-        for (var round = 1; round <= targetRounds; round++)
+        foreach (var round in numRounds)
         {
-            if (round == 1 || round == 20 || round % 1000 == 0)
+            if (IsCheckRound(round))
             {
                 Printer.DebugMsg($"== After round {round} ==");
             }
             foreach (var monkey in monkeys)
             {
-                while (monkey.StartingItems.Count > 0)
+                while (monkey.Items.Count > 0)
                 {
                     inspections[monkey.NumOfMonkey]++;
-                    var worryLevel = monkey.StartingItems.Dequeue();
+                    var worryLevel = monkey.Items.Dequeue();
                     worryLevel = monkey.Operation(worryLevel);
-                    if(worryLevel % minDivider == 0)
-                    {
-                        worryLevel = worryLevel / minDivider;
-                    }
+                    worryLevel = Monkey.ReduceWorryLevelCommonDivider(worryLevel, commonDivisor);
 
-                    monkeys[monkey.GetTargetByWorryLevel(worryLevel)].StartingItems.Enqueue(worryLevel);
+                    monkeys[monkey.GetTargetByWorryLevel(worryLevel)].Items.Enqueue(worryLevel);
                 }
-                if (round == 1 || round == 20 || round % 1000 == 0)
+
+                if (IsCheckRound(round))
                 {
                     Printer.DebugMsg($"  Monkey {monkey.NumOfMonkey} inspected items {inspections[monkey.NumOfMonkey]} times.");
                 }
@@ -92,28 +88,31 @@ public sealed class Day11 : PuzzleBaseLines
         return product.ToString();
     }
 
-    private sealed record Monkey(ushort NumOfMonkey, Queue<BigInteger> StartingItems, Func<BigInteger, BigInteger> Operation, uint TestDivisor, ushort monkeyNumTargetTrue, ushort monkeyNumTargetFalse)
+    private sealed record Monkey(int NumOfMonkey, Queue<long> Items, Func<long, long> Operation, int TestDivisor, int monkeyNumTargetTrue, int monkeyNumTargetFalse)
     {
-        public static Func<BigInteger, BigInteger> ReducedWorryLevel => s => s / 3;
-        public Func<BigInteger, bool> IsDivisible => worryLevel => worryLevel % TestDivisor == 0;
-        public Func<BigInteger, ushort> GetTargetByWorryLevel => worryLevel => (IsDivisible(worryLevel) ? monkeyNumTargetTrue : monkeyNumTargetFalse);
+        public static Func<long, long> ReduceWorryLevelDefault => worryLevel => worryLevel / 3;
+        public static Func<long, long, long> ReduceWorryLevelCommonDivider => (worryLevel, commonDivider) => worryLevel % commonDivider;
+        public Func<long, bool> IsDivisible => worryLevel => worryLevel % TestDivisor == 0;
+        public Func<long, int> GetTargetByWorryLevel => worryLevel => (IsDivisible(worryLevel) ? monkeyNumTargetTrue : monkeyNumTargetFalse);
+
+        public static Monkey ParseMonkeyInput(string[] dataChunk)
+        {
+            return new Monkey(
+                        NumOfMonkey: int.Parse(dataChunk[0].Split(" ").Last().TrimEnd(':')),
+                        Items: new Queue<long>(dataChunk[1].Substring(dataChunk[1].IndexOf(':') + 2).Split(", ").Select(long.Parse)),
+                        Operation: (dataChunk[2].Substring(dataChunk[2].IndexOf('=') + 2).Trim().Split(" ")) switch
+                        {
+                            ["old", "+", "old"] => (val => val + val),
+                            ["old", "*", "old"] => (val => val * val),
+                            ["old", "+", var num] => (val => val + int.Parse(num)),
+                            ["old", "*", var num] => (val => val * int.Parse(num)),
+                            _ => (val => val)
+                        },
+                        TestDivisor: int.Parse(dataChunk[3].Split(" ").Last()),
+                        monkeyNumTargetTrue: int.Parse(dataChunk[4].Split(" ").Last()),
+                        monkeyNumTargetFalse: int.Parse(dataChunk[5].Split(" ").Last()));
+        }
     }
 
-    private Monkey ParseMonkeyInput(string[] dataChunk)
-    {
-        return new Monkey(
-                    NumOfMonkey: ushort.Parse(dataChunk[0].Split(" ").Last().TrimEnd(':')),
-                    StartingItems: new Queue<BigInteger> (dataChunk[1].Substring(dataChunk[1].IndexOf(':') + 2).Split(", ").Select(BigInteger.Parse)),
-                    Operation: (dataChunk[2].Substring(dataChunk[2].IndexOf('=') + 2).Trim().Split(" ")) switch
-                    {
-                        ["old", "+", "old"] => (val => val + val),
-                        ["old", "*", "old"] => (val => val * val),
-                        ["old", "+", var num] => (val => val + uint.Parse(num)),
-                        ["old", "*", var num] => (val => val * uint.Parse(num)),
-                        _ => (val => val)
-                    },
-                    TestDivisor: ushort.Parse(dataChunk[3].Split(" ").Last()),
-                    monkeyNumTargetTrue: ushort.Parse(dataChunk[4].Split(" ").Last()),
-                    monkeyNumTargetFalse: ushort.Parse(dataChunk[5].Split(" ").Last()));
-    }
+    private bool IsCheckRound(int round) => round == 1 || round == 20 || round % 1000 == 0;
 }
