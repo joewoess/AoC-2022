@@ -53,7 +53,7 @@ public sealed class Day11 : PuzzleBaseLines
         Array.ForEach(monkeys, monkey => inspections.Add(monkey.NumOfMonkey, 0));
 
         var numRounds = Grids.Range(1, 10_000);
-        var commonDivisor = monkeys.Select(monkey => monkey.TestDivisor).Aggregate((a, b) => a * b);
+        var lcd = monkeys.Select(monkey => monkey.TestDivisor).Aggregate((a, b) => a * b);
 
 
         foreach (var round in numRounds)
@@ -69,7 +69,7 @@ public sealed class Day11 : PuzzleBaseLines
                     inspections[monkey.NumOfMonkey]++;
                     var worryLevel = monkey.Items.Dequeue();
                     worryLevel = monkey.Operation(worryLevel);
-                    worryLevel = Monkey.ReduceWorryLevelCommonDivider(worryLevel, commonDivisor);
+                    worryLevel = Monkey.ReduceWorryLevelByLCD(worryLevel, lcd);
 
                     monkeys[monkey.GetTargetByWorryLevel(worryLevel)].Items.Enqueue(worryLevel);
                 }
@@ -91,7 +91,7 @@ public sealed class Day11 : PuzzleBaseLines
     private sealed record Monkey(int NumOfMonkey, Queue<long> Items, Func<long, long> Operation, int TestDivisor, int monkeyNumTargetTrue, int monkeyNumTargetFalse)
     {
         public static Func<long, long> ReduceWorryLevelDefault => worryLevel => worryLevel / 3;
-        public static Func<long, long, long> ReduceWorryLevelCommonDivider => (worryLevel, commonDivider) => worryLevel % commonDivider;
+        public static Func<long, long, long> ReduceWorryLevelByLCD => (worryLevel, commonDivider) => worryLevel % commonDivider;
         public Func<long, bool> IsDivisible => worryLevel => worryLevel % TestDivisor == 0;
         public Func<long, int> GetTargetByWorryLevel => worryLevel => (IsDivisible(worryLevel) ? monkeyNumTargetTrue : monkeyNumTargetFalse);
 
