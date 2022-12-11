@@ -122,7 +122,7 @@ public static class Grids
     public static IEnumerable<int> Range(int from, int to)
     {
         return from > to
-            ? Enumerable.Range(to, from - to + 1)
-            : Enumerable.Range(from, to - from + 1).Reverse();
+            ? Enumerable.Range(to, from - to + 1).Reverse()
+            : Enumerable.Range(from, to - from + 1);
     }
 }

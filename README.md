@@ -20,7 +20,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 |  8  | [Treetop Tree House](https://adventofcode.com/2022/day/8)  | [Csharp](src/aoc-csharp/puzzles/Day08.cs) | FSharp | Typescript | Rust | Python
 |  9  | [Rope Bridge](https://adventofcode.com/2022/day/9)  | [Csharp](src/aoc-csharp/puzzles/Day09.cs) | FSharp | Typescript | Rust | Python
 | 10  | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10) | [Csharp](src/aoc-csharp/puzzles/Day10.cs) | FSharp | Typescript | Rust | Python
-| 11  | [Challenge 11](https://adventofcode.com/2022/day/11) | Csharp | FSharp | Typescript | Rust | Python
+| 11  | [Monkey in the Middle](https://adventofcode.com/2022/day/11) | [Csharp](src/aoc-csharp/puzzles/Day11.cs) | FSharp | Typescript | Rust | Python
 | 12  | [Challenge 12](https://adventofcode.com/2022/day/12) | Csharp | FSharp | Typescript | Rust | Python
 | 13  | [Challenge 13](https://adventofcode.com/2022/day/13) | Csharp | FSharp | Typescript | Rust | Python
 | 14  | [Challenge 14](https://adventofcode.com/2022/day/14) | Csharp | FSharp | Typescript | Rust | Python
