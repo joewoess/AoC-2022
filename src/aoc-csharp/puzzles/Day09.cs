@@ -1,3 +1,5 @@
+using static aoc_csharp.PathFinding;
+
 namespace aoc_csharp.puzzles;
 
 public sealed class Day09 : PuzzleBaseLines
@@ -22,13 +24,13 @@ public sealed class Day09 : PuzzleBaseLines
 
         foreach (var (dir, amount) in instructions)
         {
-            var amountOfSteps = Grids.Range(1, amount);
+            var amountOfSteps = Util.Range(1, amount);
             Printer.DebugMsg($"Head traveling from {headPoint} > {dir} {amount} steps.");
 
             foreach (var _ in amountOfSteps)
             {
-                var nextHeadPoint = headPoint.StepInDirection(dir);
-                if (!nextHeadPoint.IsNeighborPoint(tailPoint))
+                var nextHeadPoint = headPoint.StepInDirection(ParseDirection(dir));
+                if (!nextHeadPoint.IsWithinReach(tailPoint))
                 {
                     tailPoint = tailPoint.StepTowards(nextHeadPoint);
                 }
@@ -64,15 +66,15 @@ public sealed class Day09 : PuzzleBaseLines
 
         foreach (var (dir, amount) in instructions)
         {
-            var amountOfSteps = Grids.Range(1, amount);
+            var amountOfSteps = Util.Range(1, amount);
             Printer.DebugMsg($"Head traveling from {rope[0]} > {dir} {amount} steps.");
 
             foreach (var _ in amountOfSteps)
             {
                 var nextRope = rope.ToArray();
-                nextRope[0] = rope[0].StepInDirection(dir);
-                Grids.Range(1, rope.Length - 1)
-                    .Where(idx => !nextRope[idx - 1].IsNeighborPoint(rope[idx]))
+                nextRope[0] = rope[0].StepInDirection(ParseDirection(dir));
+                Util.Range(1, rope.Length - 1)
+                    .Where(idx => !nextRope[idx - 1].IsWithinReach(rope[idx]))
                     .ToList()
                     .ForEach(idx => nextRope[idx] = rope[idx].StepTowards(rope[idx - 1]));
                 rope = nextRope;
@@ -98,37 +100,12 @@ public sealed class Day09 : PuzzleBaseLines
 
         return visitedFields.ToString();
     }
-}
-
-public static class PointerExtensions
-{
-    public static Point StepInDirection(this Point currentPoint, string dir)
+    private Direction ParseDirection (string dir) => dir switch
     {
-        switch (dir)
-        {
-            case "U":
-                return new Point(currentPoint.X, currentPoint.Y - 1);
-            case "D":
-                return new Point(currentPoint.X, currentPoint.Y + 1);
-            case "L":
-                return new Point(currentPoint.X - 1, currentPoint.Y);
-            case "R":
-                return new Point(currentPoint.X + 1, currentPoint.Y);
-            default: throw new Exception($"Unknown direction {dir}");
-        }
-    }
-
-    public static Point StepTowards(this Point currentPoint, Point target)
-    {
-        var xDiff = target.X - currentPoint.X;
-        var xStep = Math.Abs(xDiff) > 0 ? 1 * Math.Sign(xDiff) : 0;
-        var yDiff = target.Y - currentPoint.Y;
-        var yStep = Math.Abs(yDiff) > 0 ? 1 * Math.Sign(yDiff) : 0;
-        return new Point(currentPoint.X + xStep, currentPoint.Y + yStep);
-    }
-
-    public static bool IsNeighborPoint(this Point currentPoint, Point target)
-    {
-        return Math.Abs(currentPoint.X - target.X) <= 1 && Math.Abs(currentPoint.Y - target.Y) <= 1;
-    }
+        "U" => Direction.Up,
+        "D" => Direction.Down,
+        "L" => Direction.Left,
+        "R" => Direction.Right,
+        _ => throw new Exception($"Unknown direction {dir}")
+    };
 }

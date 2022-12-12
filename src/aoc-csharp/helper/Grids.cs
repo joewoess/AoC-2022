@@ -61,6 +61,7 @@ public static class Grids
         return result.ToString();
     }
 
+    /** Converts a multidimensional array to a jagged array */
     public static T[][] ToJaggedArray<T>(this T[,] twoDimensionalArray)
     {
         var rowsFirstIndex = twoDimensionalArray.GetLowerBound(0);
@@ -83,46 +84,5 @@ public static class Grids
         }
 
         return jaggedArray;
-    }
-
-    /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
-    public static IEnumerable<Point> Walk(Point from, Point to)
-    {
-        var points = new List<Point>();
-        switch (from)
-        {
-            case var (x, y) when Math.Abs(x - to.X) == Math.Abs(y - to.Y):
-                Range(from.X, to.X)
-                    .Zip(Range(from.Y, to.Y))
-                    .Select(pos => new Point(pos.First, pos.Second))
-                    .ToList()
-                    .ForEach(points.Add);
-                break;
-            case var (x, _) when x == to.X:
-                Range(from.Y, to.Y)
-                    .Select(y => new Point(x, y))
-                    .ToList()
-                    .ForEach(points.Add);
-                break;
-            case var (_, y) when y == to.Y:
-                Range(from.X, to.X)
-                    .Select(x => new Point(x, y))
-                    .ToList()
-                    .ForEach(points.Add);
-                break;
-            default:
-                Printer.DebugMsg($"Invalid coordinates going from {from} to {to}");
-                break;
-        }
-
-        return points;
-    }
-    
-    /** Returns an enumerable of ints between from and to counting down if needed */
-    public static IEnumerable<int> Range(int from, int to)
-    {
-        return from > to
-            ? Enumerable.Range(to, from - to + 1).Reverse()
-            : Enumerable.Range(from, to - from + 1);
     }
 }

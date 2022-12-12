@@ -16,7 +16,7 @@ public sealed class Day11 : PuzzleBaseLines
         var inspections = new Dictionary<int, int>();
         Array.ForEach(monkeys, monkey => inspections.Add(monkey.NumOfMonkey, 0));
 
-        var numRounds = Grids.Range(1, 20);
+        var numRounds = Util.Range(1, 20);
 
         foreach (var _ in numRounds)
         {
@@ -52,7 +52,7 @@ public sealed class Day11 : PuzzleBaseLines
         var inspections = new Dictionary<int, int>();
         Array.ForEach(monkeys, monkey => inspections.Add(monkey.NumOfMonkey, 0));
 
-        var numRounds = Grids.Range(1, 10_000);
+        var numRounds = Util.Range(1, 10_000);
         var lcd = monkeys.Select(monkey => monkey.TestDivisor).Aggregate((a, b) => a * b);
 
 

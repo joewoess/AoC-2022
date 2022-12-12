@@ -6,16 +6,16 @@ public sealed class Day04 : PuzzleBaseLines
     {
         var score = 0;
         List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = _input
-            .Select(line => SplitToPair(line))
-            .Select(pairs =>  (elfA: SplitToPair(pairs.A, "-"), elfB: SplitToPair(pairs.B, "-")))
-            .Select(ranges => ((int.Parse(ranges.elfA.A), int.Parse(ranges.elfA.B)), (int.Parse(ranges.elfB.A), int.Parse(ranges.elfB.B))))
+            .Select(line => Util.SplitToPair(line))
+            .Select(pairs =>  (elfA: Util.SplitToPair(pairs.First, "-"), elfB: Util.SplitToPair(pairs.Second, "-")))
+            .Select(ranges => ((int.Parse(ranges.elfA.First), int.Parse(ranges.elfA.Second)), (int.Parse(ranges.elfB.First), int.Parse(ranges.elfB.Second))))
             .ToList();
 
         foreach (var (elfA, elfB) in assignments)
         {
             Printer.DebugMsg($"Assignment is [elfA] [elfB]: [{elfA}] [{elfB}]");
-            var elfARange = Grids.Range(elfA.from, elfA.to);
-            var elfBRange = Grids.Range(elfB.from, elfB.to);
+            var elfARange = Util.Range(elfA.from, elfA.to);
+            var elfBRange = Util.Range(elfB.from, elfB.to);
 
             if (elfARange.All(elfBRange.Contains) || elfBRange.All(elfARange.Contains))
             {
@@ -32,16 +32,16 @@ public sealed class Day04 : PuzzleBaseLines
     {
         var score = 0;
         List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = _input
-            .Select(line => SplitToPair(line))
-            .Select(pairs =>  (elfA: SplitToPair(pairs.A, "-"), elfB: SplitToPair(pairs.B, "-")))
-            .Select(ranges => ((int.Parse(ranges.elfA.A), int.Parse(ranges.elfA.B)), (int.Parse(ranges.elfB.A), int.Parse(ranges.elfB.B))))
+            .Select(line => Util.SplitToPair(line))
+            .Select(pairs =>  (elfA: Util.SplitToPair(pairs.First, "-"), elfB: Util.SplitToPair(pairs.Second, "-")))
+            .Select(ranges => ((int.Parse(ranges.elfA.First), int.Parse(ranges.elfA.Second)), (int.Parse(ranges.elfB.First), int.Parse(ranges.elfB.Second))))
             .ToList();
 
         foreach (var (elfA, elfB) in assignments)
         {
             Printer.DebugMsg($"Assignment is [elfA] [elfB]: [{elfA}] [{elfB}]");
-            var elfARange = Grids.Range(elfA.from, elfA.to);
-            var elfBRange = Grids.Range(elfB.from, elfB.to);
+            var elfARange = Util.Range(elfA.from, elfA.to);
+            var elfBRange = Util.Range(elfB.from, elfB.to);
 
             if (elfARange.Any(elfBRange.Contains) || elfBRange.Any(elfARange.Contains))
             {
@@ -52,11 +52,5 @@ public sealed class Day04 : PuzzleBaseLines
         }
         Printer.DebugMsg($"Times one elf was fully unneeded was {score}.");
         return score.ToString();
-    }
-
-    private static (string A, string B) SplitToPair(string str, string seperator = ",")
-    {
-        var parts = str.Split(seperator);
-        return (parts[0], parts[1]);
     }
 }
