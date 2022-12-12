@@ -34,4 +34,15 @@ public static class Printer
     {
         if (Config.IsDebug) Console.WriteLine(message);
     }
+
+    /** Print a collection only up to a certain amount */
+    public static void DebugPrintExcerpt<T>(IEnumerable<T> collection, string? prefix = null, int maxCount = 10, string seperator = ", ")
+    {
+        if (Config.IsDebug)
+        {
+            if (prefix != null) Console.Write(prefix);
+            Console.Write(string.Join(seperator, collection.Take(maxCount)));
+            Console.WriteLine($"... and {collection.Count() - maxCount} more");
+        }
+    }
 }

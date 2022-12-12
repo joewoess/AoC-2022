@@ -12,17 +12,24 @@ public static class PathFinding
         }
     }
 
-    private static List<TGrid> MapNeighbors<TMap, TGrid>(Dictionary<Point, TMap> map, Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
+    public static List<TGrid> MapNeighbors<TGrid>(this Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
+    {
+        return currentPos
+            .GetNeighborsFiltered(filter, maxHeight, maxWidth, includeDiagonals)
+            .Select(pos => mapper(currentPos, pos))
+            .ToList();
+    }
+
+    public static List<Point> GetNeighborsFiltered(this Point currentPos, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
     {
         return currentPos.GetNeighborPoints(includeDiagonals)
             .Where(pos => pos.X >= 0 && pos.X < maxWidth)
             .Where(pos => pos.Y >= 0 && pos.Y < maxHeight)
             .Where(pos => filter(currentPos, pos))
-            .Select(pos => mapper(currentPos, pos))
             .ToList();
     }
 
-    private static IEnumerable<TGrid> GetNeighbors<TGrid>(TGrid[][] grid, int currentY, int currentX, bool includeDiagonals = false)
+    public static IEnumerable<TGrid> GetNeighbors<TGrid>(TGrid[][] grid, int currentY, int currentX, bool includeDiagonals = false)
     {
         if (currentY > 0) yield return grid[currentY - 1][currentX];
         if (currentY < grid.Length - 1) yield return grid[currentY + 1][currentX];
@@ -38,7 +45,7 @@ public static class PathFinding
         }
     }
 
-    // A Star implementation
+    // A* implementation
 
     public class Field
     {
@@ -51,12 +58,18 @@ public static class PathFinding
         public override string ToString() => $"{Position} = {Distance}";
     }
 
-    public static List<Point>? FindPath<TMap>(Dictionary<Point, TMap> map, Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
+    public static List<Point>? FindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+        Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
-        var startField = new Field { Position = start, Cost = 0, Distance = start.ManhattanDistance(end) };
+        // default distance function is manhattan distance
+        distanceFunc ??= (from, to) => from.ManhattanDistance(to);
+        // default cost function is increment of 1
+        calcCost ??= (cost) => cost + 1;
+
+        var startField = new Field { Position = start, Cost = 0, Distance = distanceFunc(start, end) };
         var visitedFields = new List<Field>();
         var possibleFields = new List<Field>();
-        
+
         possibleFields.Add(startField);
 
         while (possibleFields.Count > 0)
@@ -67,9 +80,9 @@ public static class PathFinding
             possibleFields.Remove(current);
             visitedFields.Add(current);
 
-            foreach (var neighbor in MapNeighbors(map, current.Position, (currentPos, neighborPos) => neighborPos, filter, maxHeight, maxWidth, includeDiagonals))
+            foreach (var neighbor in current.Position.GetNeighborsFiltered(filter, maxHeight, maxWidth, includeDiagonals))
             {
-                var neighborField = new Field { Position = neighbor, Cost = current.Cost + 1, Distance = neighbor.ManhattanDistance(end), Parent = current };
+                var neighborField = new Field { Position = neighbor, Cost = calcCost(current.Cost), Distance = distanceFunc(neighbor, end), Parent = current };
 
                 if (visitedFields.Any(field => field.Position == neighborField.Position)) continue;
                 if (possibleFields.Any(field => field.Position == neighborField.Position && field.CostDistance <= neighborField.CostDistance)) continue;
@@ -79,7 +92,7 @@ public static class PathFinding
         }
         return null;
     }
-    public static List<Point> ReconstructPath(Field current)
+    private static List<Point> ReconstructPath(Field current)
     {
         var path = new List<Point>();
         while (current.Parent != null)
@@ -90,76 +103,4 @@ public static class PathFinding
         path.Reverse();
         return path;
     }
-
-    // public static List<Point> FindPathGeneric<TMap>(Dictionary<Point, TMap> map, Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
-    // {
-    //     var startTile = new Field
-    //     {
-    //         Position = start,
-    //     };
-
-    //     var goalTile = new Field
-    //     {
-    //         Position = end
-    //     };
-    //     startTile.SetDistance(end);
-
-    //     var visitedTiles = new List<Field>();
-    //     var activeTiles = new List<Field>();
-    //     activeTiles.Add(startTile);
-
-    //     Field? checkingTile = null;
-
-    //     while (activeTiles.Any())
-    //     {
-    //         checkingTile = activeTiles.OrderBy(x => x.CostDistance).First();
-
-    //         if (checkingTile.Position == goalTile.Position)
-    //         {
-    //             // Found the goal
-    //             break;
-    //         }
-
-    //         visitedTiles.Add(checkingTile);
-    //         activeTiles.Remove(checkingTile);
-
-    //         var walkableTiles = MapNeighbors(map, checkingTile, mapHeight, mapWidth);
-
-    //         foreach (var walkableTile in walkableTiles)
-    //         {
-    //             //We have already visited this tile so we don't need to do so again!
-    //             if (visitedTiles.Any(x => x.X == walkableTile.X && x.Y == walkableTile.Y))
-    //                 continue;
-
-    //             //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
-    //             var existingTile = activeTiles.FirstOrDefault(x => x.X == walkableTile.X && x.Y == walkableTile.Y);
-    //             if (existingTile != null)
-    //             {
-    //                 if (existingTile.CostDistance > checkingTile.CostDistance)
-    //                 {
-    //                     activeTiles.Remove(existingTile);
-    //                     activeTiles.Add(walkableTile);
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 //We've never seen this tile before so add it to the list. 
-    //                 activeTiles.Add(walkableTile);
-    //             }
-    //         }
-    //     }
-
-    //     if (checkingTile?.X != goalTile.X || checkingTile?.Y != goalTile.Y)
-    //     {
-    //         Printer.DebugMsg($"Failed to find a path to the goal tile from ({start.X}, {start.Y})");
-    //         continue;
-    //     }
-    //     var isNewMin = checkingTile?.CostDistance < (minGoalTile?.CostDistance ?? int.MaxValue);
-    //     Printer.DebugMsg($"Found the goal tile from startpoint ({start.X}, {start.Y}) with distance {checkingTile?.CostDistance}. New min? {isNewMin}");
-
-    //     if (isNewMin)
-    //     {
-    //         minGoalTile = checkingTile;
-    //     }
-    // }
 }

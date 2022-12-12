@@ -1,106 +1,45 @@
 using System.Numerics;
-
 namespace aoc_csharp.puzzles;
 
 public sealed class Day12 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
-        // var map = _input
-        //     .Select(line => line.Select(c => new HeightValue(c)).ToArray())
-        //     .ToArray();
-        // var grid = new Dictionary<Point, HeightValue>();
-        // map.Select((line, lineIdx) => line.Select((h, posIdx) => (Pos: new Point(posIdx, lineIdx), Height: h)).ToArray())
-        //     .SelectMany(x => x)
-        //     .ToList()
-        //     .ForEach(x => grid.Add(x.Pos, x.Height));
+        var grid = new Dictionary<Point, HeightValue>();
+        _input
+            .Select(line => line.Select(c => new HeightValue(c)).ToArray())
+            .Select((line, lineIdx) => line.Select((h, posIdx) => (Pos: new Point(posIdx, lineIdx), Height: h)).ToArray())
+            .SelectMany(x => x)
+            .ToList()
+            .ForEach(x => grid.Add(x.Pos, x.Height));
 
-        // var mapHeight = map.Length;
-        // var mapWidth = map[0].Length;
+        var mapHeight = _input.Length;
+        var mapWidth = _input[0].Length;
 
-        // Printer.DebugMsg($"The height map looks as follows:\n{Grids.GridAsPrintable(map)}");
+        var start = grid.Where(entry => entry.Value.IsStart).Select(e => e.Key).Single();
+        var goal = grid.Where(entry => entry.Value.IsEnd).Select(e => e.Key).Single();
 
-        // var start = grid.Where(x => x.Value.IsStart).Select(x => x.Key).Single();
-        // var goal = grid.Where(x => x.Value.IsEnd).Select(x => x.Key).Single();
+        var foundPath = PathFinding.FindPath(start, goal,
+                                            (curr, next) => grid[curr].CanWalkTo(grid[next]),
+                                            mapHeight, mapWidth,
+                                            PointerExtensions.ManhattanDistance,
+                                            (cost) => cost + 1,
+                                            false);
+        if (foundPath == null)
+        {
+            Printer.DebugMsg($"Failed to find a path to the goal tile from ({start.X}, {start.Y})");
+            return null;
+        }
+        else
+        {
+            var travelledPath = foundPath.ToDictionary(pos => pos, pos => grid[pos]);
+            Printer.DebugMsg($"The path looks like this:\n{Grids.GridAsPrintable(Grids.PointDictToGrid(travelledPath, (val) => (val == default ? '.' : val.Symbol)))}");
 
-        // var startTile = new Tile
-        // {
-        //     X = start.X,
-        //     Y = start.Y
-        // };
 
-        // var goalTile = new Tile()
-        // {
-        //     X = goal.X,
-        //     Y = goal.Y
-        // };
-
-        // startTile.SetDistance(goal.X, goal.Y);
-
-        // var activeTiles = new List<Tile>();
-        // activeTiles.Add(startTile);
-        // var visitedTiles = new List<Tile>();
-        // Tile? checkTile = null;
-
-        // while (activeTiles.Any())
-        // {
-        //     checkTile = activeTiles.OrderByDescending(x => x.CostDistance).Last();
-
-        //     if (checkTile.X == goalTile.X && checkTile.Y == goalTile.Y)
-        //     {
-        //         Printer.DebugMsg($"Found the goal tile at {checkTile.X}, {checkTile.Y}!");
-        //         break;
-        //     }
-
-        //     visitedTiles.Add(checkTile);
-        //     activeTiles.Remove(checkTile);
-
-        //     var walkableTiles = GetWalkableTiles(grid, checkTile, goalTile, mapHeight, mapWidth);
-
-        //     foreach (var walkableTile in walkableTiles)
-        //     {
-        //         //We have already visited this tile so we don't need to do so again!
-        //         if (visitedTiles.Any(x => x.X == walkableTile.X && x.Y == walkableTile.Y))
-        //             continue;
-
-        //         //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
-        //         if (activeTiles.Any(x => x.X == walkableTile.X && x.Y == walkableTile.Y))
-        //         {
-        //             var existingTile = activeTiles.First(x => x.X == walkableTile.X && x.Y == walkableTile.Y);
-        //             if (existingTile.CostDistance > checkTile.CostDistance)
-        //             {
-        //                 activeTiles.Remove(existingTile);
-        //                 activeTiles.Add(walkableTile);
-        //             }
-        //         }
-        //         else
-        //         {
-        //             //We've never seen this tile before so add it to the list. 
-        //             activeTiles.Add(walkableTile);
-        //         }
-        //     }
-        // }
-
-        // if(checkTile?.X == goalTile.X && checkTile?.Y == goalTile.Y)
-        // {
-        //     var tile = checkTile;
-        //     while(true)
-        //     {
-        //         var pos = new Point(tile.X, tile.Y);
-        //         Printer.DebugMsg($"Visited {grid[pos]} at {pos} with cost {tile.Cost} and distance {tile.Distance}");
-
-        //         tile = tile.Parent;
-        //         if(tile == null)
-        //         {
-        //             break;
-        //         }
-        //     }
-        // }
-
-        // var minSteps = checkTile?.CostDistance ?? 0;
-        // Printer.DebugMsg($"Reached the goal in {minSteps} steps.");
-        // return minSteps.ToString();
-        return null;
+            var minSteps = foundPath?.Count ?? 0;
+            Printer.DebugMsg($"Found shortest path with {minSteps} steps.");
+            return minSteps.ToString();
+        }
     }
 
     public override string? SecondPuzzle()
@@ -118,87 +57,34 @@ public sealed class Day12 : PuzzleBaseLines
         var mapWidth = _input[0].Length;
 
         var possibleStarts = grid.Where(entry => entry.Value.Height == 0).Select(e => e.Key).ToList();
-        Printer.DebugMsg($"Possible starts are: {string.Join(", ", possibleStarts)}");
+        Printer.DebugPrintExcerpt(possibleStarts, "Possible starts are: ");
         var goal = grid.Where(entry => entry.Value.IsEnd).Select(e => e.Key).Single();
 
-        Tile? minGoalTile = null;
+        List<Point>? minPath = null;
 
         foreach (var start in possibleStarts)
         {
-            var startTile = new Tile
+            var foundPath = PathFinding.FindPath(start, goal,
+                                                (curr, next) => grid[curr].CanWalkTo(grid[next]),
+                                                mapHeight, mapWidth,
+                                                PointerExtensions.ManhattanDistance,
+                                                (cost) => cost + 1,
+                                                false);
+            if (foundPath == null)
             {
-                X = start.X,
-                Y = start.Y
-            };
-
-            var goalTile = new Tile
-            {
-                X = goal.X,
-                Y = goal.Y
-            };
-
-            startTile.SetDistance(goal.X, goal.Y);
-
-            var activeTiles = new List<Tile>();
-            var visitedTiles = new List<Tile>();
-            activeTiles.Add(startTile);
-
-            Tile? checkTile = null;
-
-            while (activeTiles.Any())
-            {
-                checkTile = activeTiles.OrderByDescending(x => x.CostDistance).Last();
-
-                if (checkTile.X == goalTile.X && checkTile.Y == goalTile.Y)
-                {
-                    // Found the goal
-                    break;
-                }
-
-                visitedTiles.Add(checkTile);
-                activeTiles.Remove(checkTile);
-
-                var walkableTiles = GetWalkableTiles(grid, checkTile, goalTile, mapHeight, mapWidth);
-
-                foreach (var walkableTile in walkableTiles)
-                {
-                    //We have already visited this tile so we don't need to do so again!
-                    if (visitedTiles.Any(x => x.X == walkableTile.X && x.Y == walkableTile.Y))
-                        continue;
-
-                    //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
-                    var existingTile = activeTiles.FirstOrDefault(x => x.X == walkableTile.X && x.Y == walkableTile.Y);
-                    if (existingTile != null)
-                    {
-                        if (existingTile.CostDistance > checkTile.CostDistance)
-                        {
-                            activeTiles.Remove(existingTile);
-                            activeTiles.Add(walkableTile);
-                        }
-                    }
-                    else
-                    {
-                        //We've never seen this tile before so add it to the list. 
-                        activeTiles.Add(walkableTile);
-                    }
-                }
-            }
-
-            if (checkTile?.X != goalTile.X || checkTile?.Y != goalTile.Y)
-            {
-                Printer.DebugMsg($"Failed to find a path to the goal tile from ({start.X}, {start.Y})");
+                //Printer.DebugMsg($"Failed to find a path to the goal tile from ({start.X}, {start.Y})");
                 continue;
             }
-            var isNewMin = checkTile?.CostDistance < (minGoalTile?.CostDistance ?? int.MaxValue);                
-            Printer.DebugMsg($"Found the goal tile from startpoint ({start.X}, {start.Y}) with distance {checkTile?.CostDistance}. New min? {isNewMin}");
+            var isNewMin = foundPath.Count < (minPath?.Count ?? int.MaxValue);
 
             if (isNewMin)
             {
-                minGoalTile = checkTile;
+                Printer.DebugMsg($"Found new min path starting at ({start.X}, {start.Y}) with distance {foundPath?.Count}");
+                minPath = foundPath?.ToList();
             }
         }
 
-        var minSteps = minGoalTile?.CostDistance ?? 0;
+        var minSteps = minPath?.Count ?? 0;
         Printer.DebugMsg($"Found shortest path with {minSteps} steps.");
         return minSteps.ToString();
     }
@@ -206,8 +92,8 @@ public sealed class Day12 : PuzzleBaseLines
     private record struct HeightValue(int Height, char Symbol)
     {
         private const int HeightBase = (int)'a';
-        public HeightValue(char c) : this(ParseSymbol(c), c) {}
-        public HeightValue(int h) : this(h, ParseHeight(h)) {}
+        public HeightValue(char c) : this(ParseSymbol(c), c) { }
+        public HeightValue(int h) : this(h, ParseHeight(h)) { }
         public bool IsStart => Symbol == 'S';
         public bool IsEnd => Symbol == 'E';
         public static char ParseHeight(int height) => (char)(height + HeightBase);
@@ -221,41 +107,5 @@ public sealed class Day12 : PuzzleBaseLines
         public bool CanWalkTo(HeightValue other) => other.Height <= Height + 1;
 
         public override string ToString() => Symbol.ToString();
-    }
-
-    private class Tile
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Cost { get; set; }
-        public int Distance { get; set; }
-        public int CostDistance => Cost + Distance;
-        public Tile? Parent { get; set; }
-
-        public void SetDistance(int targetX, int targetY)
-        {
-            this.Distance = Math.Abs(targetX - X) + Math.Abs(targetY - Y);
-        }
-
-        public override string ToString() => $"({X}, {Y}) = {Distance}";
-    }
-
-    private static List<Tile> GetWalkableTiles(Dictionary<Point, HeightValue> grid, Tile currentTile, Tile targetTile, int maxHeight, int maxWidth)
-    {
-        var possibleTiles = new List<Tile>()
-        {
-            new Tile { X = currentTile.X, Y = currentTile.Y - 1, Parent = currentTile, Cost = currentTile.Cost + 1 },
-            new Tile { X = currentTile.X, Y = currentTile.Y + 1, Parent = currentTile, Cost = currentTile.Cost + 1},
-            new Tile { X = currentTile.X - 1, Y = currentTile.Y, Parent = currentTile, Cost = currentTile.Cost + 1 },
-            new Tile { X = currentTile.X + 1, Y = currentTile.Y, Parent = currentTile, Cost = currentTile.Cost + 1 },
-        };
-
-        possibleTiles.ForEach(tile => tile.SetDistance(targetTile.X, targetTile.Y));
-
-        return possibleTiles
-                .Where(tile => tile.X >= 0 && tile.X < maxWidth)
-                .Where(tile => tile.Y >= 0 && tile.Y < maxHeight)
-                .Where(tile => grid[new Point(currentTile.X, currentTile.Y)].CanWalkTo(grid[new Point(tile.X, tile.Y)]))
-                .ToList();
     }
 }
