@@ -12,6 +12,8 @@ rust=false
 last=false
 debug=false
 demo=false
+first=false
+second=false
 
 # Parse the flags
 while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
@@ -24,17 +26,19 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
     echo "--------------------------------------------------------------------------------"
     echo "Usage: ./aoc.sh [options] [arguments]"
     echo "Arguments: "
-    echo "  --last  |     Run the last solution that was run"
-    echo "  --debug |     Run the solution in debug mode"
-    echo "  --demo  |     Run the solution in demo mode"
-    echo "  [nums]  |     numbers of days to run the solution for (e.g. 1 2 3)"
+    echo "  --last   |     Run the last implemented solution"
+    echo "  --debug  |     Run the solution in debug mode"
+    echo "  --demo   |     Run the solution with demo data"
+    echo "  --first  |     Only run the first part of the solution"
+    echo "  --second |     Only run the second part of the solution"
+    echo "  [nums]   |     numbers of days to run the solution for (e.g. 1 2 3)"
     echo "Options:"
-    echo "  -h      |     --help"
-    echo "  -cs     |     --csharp"
-    echo "  -fs     |     --fsharp"
-    echo "  -py     |     --python"
-    echo "  -ts     |     --typescript"
-    echo "  -r      |     --rust"
+    echo "  -h       |     --help"
+    echo "  -cs      |     --csharp"
+    echo "  -fs      |     --fsharp"
+    echo "  -py      |     --python"
+    echo "  -ts      |     --typescript"
+    echo "  -r       |     --rust"
     exit
     ;;
   -cs | --csharp )
@@ -60,6 +64,12 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
     ;;
   --demo )
     demo=true
+    ;;
+  --first )
+    first=true
+    ;;
+  --second )
+    second=true
     ;;
 esac; shift; done
 if [[ "$1" == '--' ]]; then shift; fi
@@ -106,6 +116,15 @@ fi
 if $demo; then
   # Execute typescript solution with the given arguments
   exec_command="$exec_command --demo"
+fi
+if $first; then
+  # Execute typescript solution with the given arguments
+  exec_command="$exec_command --first"
+fi
+
+if $second; then
+  # Execute typescript solution with the given arguments
+  exec_command="$exec_command --second"
 fi
 
 # Execute the command

@@ -14,7 +14,7 @@ var explicitDaysRequested = args
                             .ToList();
 
 var longestMessage = $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |  ExplicitDays: [{string.Join(",", explicitDaysRequested)}]";
-// This can fail if the console isn't a real console, e.g. when running in emulated consoles
+
 Printer.ConsoleWidth = longestMessage.Length;
 if (Config.TryAndUseConsoleWidth) Printer.TryUpdateConsoleWidth();
 

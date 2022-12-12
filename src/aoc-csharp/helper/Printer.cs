@@ -23,7 +23,11 @@ public static class Printer
     public static void PrintGreeting()
     {
         PrintSeparator();
-        Console.WriteLine(Config.GreetingMessage);
+        var lines = Config.GreetingMessageLines;
+        var longestLine = lines.Max(line => line.Length);
+        var (padLeft, padRight) = ((ConsoleWidth - longestLine) / 2, (ConsoleWidth - 3 + longestLine) / 2);
+
+        Console.WriteLine(string.Join(Environment.NewLine, lines.Select(line => $"|{new string(' ', padLeft)}{line.PadRight(padRight)}|")));
         PrintSeparator();
     }
 
@@ -47,7 +51,16 @@ public static class Printer
     /** Prints the result of all days in the result table */
     public static void PrintAllSolutionMessages()
     {
-        Puzzles.PuzzleImplementationDict.Keys.ToList().ForEach(day => PrintSolutionMessage(day));
+        if (!Config.PrintAfterLastImpl)
+        {
+            var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => entry.Value != Puzzles.NoImplementation).Key;
+            Puzzles.PuzzleImplementationDict.Keys.Where(day => day <= lastDay).ToList().ForEach(day => PrintSolutionMessage(day));
+        }
+        else
+        {
+            Puzzles.PuzzleImplementationDict.Keys.ToList().ForEach(day => PrintSolutionMessage(day));
+        }
+
     }
 
     /** Prints the result of the last day with an implementation in the result table */
