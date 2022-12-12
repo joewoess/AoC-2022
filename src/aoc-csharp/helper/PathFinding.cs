@@ -47,7 +47,7 @@ public static class PathFinding
 
     // A* implementation
 
-    public class Field
+    public sealed class Field
     {
         public Point Position { get; set; }
         public int Cost { get; set; }
@@ -58,7 +58,7 @@ public static class PathFinding
         public override string ToString() => $"{Position} = {Distance}";
     }
 
-    public static List<Point>? FindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+    public static Field? CrawlPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
         // default distance function is manhattan distance
@@ -75,7 +75,7 @@ public static class PathFinding
         while (possibleFields.Count > 0)
         {
             var current = possibleFields.MinBy(tile => tile.CostDistance)!;
-            if (current.Position == end) return ReconstructPath(current);
+            if (current.Position == end) return current;
 
             possibleFields.Remove(current);
             visitedFields.Add(current);
@@ -92,7 +92,21 @@ public static class PathFinding
         }
         return null;
     }
-    private static List<Point> ReconstructPath(Field current)
+    public static List<Point>? FindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+        Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
+    {
+        return CrawlPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals) is Field path
+            ? ReconstructPath(path)
+            : null;
+    }
+
+    public static int? FindPathDistance(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+        Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
+    {
+        return CrawlPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals)?.Cost;
+    }
+
+    public static List<Point> ReconstructPath(Field current)
     {
         var path = new List<Point>();
         while (current.Parent != null)

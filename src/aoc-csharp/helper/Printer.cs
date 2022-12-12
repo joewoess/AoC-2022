@@ -41,8 +41,8 @@ public static class Printer
         if (Config.IsDebug)
         {
             if (prefix != null) Console.Write(prefix);
-            Console.Write(string.Join(seperator, collection.Take(maxCount)));
-            Console.WriteLine($"... and {collection.Count() - maxCount} more");
+            var actuallyTaken = collection.Take(maxCount).ToList();
+            Console.WriteLine($"{string.Join(seperator, actuallyTaken)} {(actuallyTaken.Count == maxCount ? $"... and {collection.Count() - actuallyTaken.Count} more" : string.Empty)}");
         }
     }
 }

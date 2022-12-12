@@ -19,6 +19,7 @@ public enum Direction
 
 public static class PointerExtensions
 {
+    // stepping
     public static Point StepInDirection(this Point currentPoint, Direction dir)
     {
         return dir switch
@@ -52,10 +53,54 @@ public static class PointerExtensions
         return new Point(currentPoint.X, currentPoint.Y + yStep);
     }
 
+    public static char GetDirectionCharTowards(this Point currentPoint, Point target)
+    {
+        return currentPoint.GetDirectionTowards(target) switch
+        {
+            // Direction.Up => '↑',
+            // Direction.Down => '↓',
+            // Direction.Left => '←', // this one had issues in the console
+            // Direction.Right => '→',
+            Direction.Up => '^',
+            Direction.Down => 'v',
+            Direction.Left => '<',
+            Direction.Right => '>',
+            Direction.UpLeft => '↖',
+            Direction.UpRight => '↗',
+            Direction.DownLeft => '↙',
+            Direction.DownRight => '↘',
+            _ => throw new Exception($"Unknown direction towards {target} from {currentPoint}")
+        };
+    }
+
+    // comparisons
+
     public static bool IsWithinReach(this Point currentPoint, Point target)
     {
         return Math.Abs(currentPoint.X - target.X) <= 1 && Math.Abs(currentPoint.Y - target.Y) <= 1;
     }
+    public static Direction GetDirectionTowards(this Point currentPoint, Point target)
+    {
+        if (currentPoint == target) return Direction.Up;
+        var xDiff = target.X - currentPoint.X;
+        var xStep = Math.Abs(xDiff) > 0 ? 1 * Math.Sign(xDiff) : 0;
+        var yDiff = target.Y - currentPoint.Y;
+        var yStep = Math.Abs(yDiff) > 0 ? 1 * Math.Sign(yDiff) : 0;
+        return (xStep, yStep) switch
+        {
+            (1, 0) => Direction.Right,
+            (-1, 0) => Direction.Left,
+            (0, 1) => Direction.Down,
+            (0, -1) => Direction.Up,
+            (1, 1) => Direction.DownRight,
+            (1, -1) => Direction.UpRight,
+            (-1, 1) => Direction.DownLeft,
+            (-1, -1) => Direction.UpLeft,
+            _ => throw new Exception($"Unknown direction towards {target} from {currentPoint}")
+        };
+    }
+
+    // distances
 
     /** Manhattan Distance = no diagonal movement */
     public static int ManhattanDistance(this Point currentPoint, Point target)
