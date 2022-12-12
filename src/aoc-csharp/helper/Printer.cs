@@ -34,18 +34,21 @@ public static class Printer
     /** Prints the result of a days puzzle in the result table */
     public static void PrintSolutionMessage(int day)
     {
-        var impl = Puzzles.PuzzleImplementationDict[day] ?? Puzzles.NoImplementation;
-        var firstPuzzle = Config.ShowFirst ? impl.FirstResult : Config.SkippedMessage;
-        var secondPuzzle = Config.ShowSecond ? impl.SecondResult : Config.SkippedMessage;
+        var implementationsOfDay = Puzzles.PuzzleImplementationDict[day] ?? new List<IPuzzle> { Puzzles.NoImplementation };
+        foreach (var impl in implementationsOfDay)
+        {
+            var firstPuzzle = Config.ShowFirst ? impl.FirstResult : Config.SkippedMessage;
+            var secondPuzzle = Config.ShowSecond ? impl.SecondResult : Config.SkippedMessage;
 
-        var columnsToPrint = new (string Message, int Padding)[] {
-            (string.Format(Config.DayMessageConvention, day), Config.InfoColumnPadding),
-            (impl.TypeName, Config.InfoColumnPadding),
-            (firstPuzzle, Config.ResultColumnPadding),
-            (secondPuzzle, Config.ResultColumnPadding)
-        }.Select(pair => pair.Message.PadLeft(pair.Padding));
+            var columnsToPrint = new (string Message, int Padding)[] {
+                (string.Format(Config.DayMessageConvention, day), Config.InfoColumnPadding),
+                (impl.TypeName, Config.InfoColumnPadding),
+                (firstPuzzle, Config.ResultColumnPadding),
+                (secondPuzzle, Config.ResultColumnPadding)
+            }.Select(pair => pair.Message.PadLeft(pair.Padding));
 
-        Console.WriteLine($"| {string.Join(" | ", columnsToPrint)} |");
+            Console.WriteLine($"| {string.Join(" | ", columnsToPrint)} |");
+        }
     }
 
     /** Prints the result of all days in the result table */
@@ -53,7 +56,7 @@ public static class Printer
     {
         if (!Config.PrintAfterLastImpl)
         {
-            var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => entry.Value != Puzzles.NoImplementation).Key;
+            var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => !(entry.Value.Count == 1 && entry.Value.First() == Puzzles.NoImplementation)).Key;
             Puzzles.PuzzleImplementationDict.Keys.Where(day => day <= lastDay).ToList().ForEach(day => PrintSolutionMessage(day));
         }
         else
@@ -66,7 +69,7 @@ public static class Printer
     /** Prints the result of the last day with an implementation in the result table */
     public static void PrintLastSolutionMessage()
     {
-        var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => entry.Value != Puzzles.NoImplementation).Key;
+        var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => !(entry.Value.Count == 1 && entry.Value.First() == Puzzles.NoImplementation)).Key;
         Printer.PrintSolutionMessage(lastDay);
     }
 

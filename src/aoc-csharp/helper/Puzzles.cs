@@ -29,7 +29,9 @@ public static class Puzzles
             .OrderBy(t => t.Name);
     }
 
-    public static Dictionary<int, IPuzzle> PuzzleImplementationDict { get; } =
+    public static Dictionary<int, List<IPuzzle>> PuzzleImplementationDict { get; } =
         Util.Range(1, Config.MaxChallengeDays)
-            .ToDictionary(day => day, day => ImplementedPuzzles.FirstOrDefault(puzzle => int.Parse(string.Join("", puzzle.TypeName.Where(char.IsDigit))) == day) ?? NoImplementation);
+            .ToDictionary(
+                day => day,
+                day => ImplementedPuzzles.Where(puzzle => int.Parse(string.Join("", puzzle.TypeName.Where(char.IsDigit))) == day).ToList() ?? new List<IPuzzle> { NoImplementation });
 }
