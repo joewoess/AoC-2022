@@ -5,7 +5,7 @@ public sealed class Day07 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
-        var rootDir = buildFileTree(_input);
+        var rootDir = buildFileTree(Data);
         DebugPrintTree(rootDir);
 
         var sub100kFiles = ListDirs(rootDir, new List<Dir>(), maxSizeFilter: 100_000L);
@@ -16,7 +16,7 @@ public sealed class Day07 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var rootDir = buildFileTree(_input);
+        var rootDir = buildFileTree(Data);
 
         var currentTotal = rootDir.Size;
         var totalSize = 70_000_000L;

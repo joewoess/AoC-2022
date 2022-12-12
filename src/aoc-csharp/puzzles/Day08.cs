@@ -4,7 +4,7 @@ public sealed class Day08 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
-        var grid = _input
+        var grid = Data
             .Select(line => line.Select(c => int.Parse(c.ToString())).ToArray())
             .ToArray();
 
@@ -61,7 +61,7 @@ public sealed class Day08 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var grid = _input
+        var grid = Data
             .Select(line => line.Select(c => int.Parse($"{c}")).ToArray())
             .ToArray();
         Printer.DebugMsg($"Grid is {grid.Length}x{grid[0].Length} with values:\n{Grids.GridAsPrintable(grid)} ");

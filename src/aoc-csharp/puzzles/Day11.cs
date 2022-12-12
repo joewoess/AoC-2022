@@ -6,7 +6,7 @@ public sealed class Day11 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
-        var monkeys = _input
+        var monkeys = Data
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Chunk(6)
             .Select(Monkey.ParseMonkeyInput)
@@ -43,7 +43,7 @@ public sealed class Day11 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var monkeys = _input
+        var monkeys = Data
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Chunk(6)
             .Select(Monkey.ParseMonkeyInput)

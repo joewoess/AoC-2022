@@ -24,7 +24,7 @@ public sealed class Day02 : PuzzleBaseLines
           * Z = Scissors
         */
         var score = 0;
-        List<(string Elf, string You)> duels = _input.Select(x => x.Split(" ").ToArray()).Select(x => (x[0], x[1])).ToList();
+        List<(string Elf, string You)> duels = Data.Select(x => x.Split(" ").ToArray()).Select(x => (x[0], x[1])).ToList();
         foreach (var duel in duels)
         {
             var duelScore = duel.You switch
@@ -72,7 +72,7 @@ public sealed class Day02 : PuzzleBaseLines
           * Z = Win
         */
         var score = 0;
-        List<(string Elf, string Outcome)> duels = _input.Select(x => x.Split(" ").ToArray()).Select(x => (x[0], x[1])).ToList();
+        List<(string Elf, string Outcome)> duels = Data.Select(x => x.Split(" ").ToArray()).Select(x => (x[0], x[1])).ToList();
         foreach (var duel in duels)
         {
             var duelScore = duel.Outcome switch

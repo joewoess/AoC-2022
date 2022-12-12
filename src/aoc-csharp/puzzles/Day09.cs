@@ -7,7 +7,7 @@ public sealed class Day09 : PuzzleBaseLines
 
     public override string? FirstPuzzle()
     {
-        var instructions = _input
+        var instructions = Data
             .Select(line => line.Split(" ").ToArray())
             .Select(line => (dir: line[0], amount: int.Parse(line[1])))
             .ToArray();
@@ -49,7 +49,7 @@ public sealed class Day09 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var instructions = _input
+        var instructions = Data
             .Select(line => line.Split(" ").ToArray())
             .Select(line => (dir: line[0], amount: int.Parse(line[1])))
             .ToArray();

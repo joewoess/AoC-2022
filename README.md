@@ -8,7 +8,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 
 ## Challenges
 
-| Day | Challenge | C# | F# | Kotlin | Rust | Python |
+| Day | Challenge | C# | F# | Typescript | Rust | Python |
 | ---: |:---------| :-------:| :-------:| :-------:| :-------:| :-------:|
 |  1  | [Calorie Counting](https://adventofcode.com/2022/day/1) | [Csharp](src/aoc-csharp/puzzles/Day01.cs) | [FSharp](src/aoc-fsharp/puzzles/Day01.fs) | [Typescript](src/aoc-typescript/day01.ts) | Rust | Python
 |  2  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  | [Csharp](src/aoc-csharp/puzzles/Day02.cs) | [FSharp](src/aoc-fsharp/puzzles/Day02.fs) | Typescript | Rust | Python
@@ -21,7 +21,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 |  9  | [Rope Bridge](https://adventofcode.com/2022/day/9)  | [Csharp](src/aoc-csharp/puzzles/Day09.cs) | FSharp | Typescript | Rust | Python
 | 10  | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10) | [Csharp](src/aoc-csharp/puzzles/Day10.cs) | FSharp | Typescript | Rust | Python
 | 11  | [Monkey in the Middle](https://adventofcode.com/2022/day/11) | [Csharp](src/aoc-csharp/puzzles/Day11.cs) | FSharp | Typescript | Rust | Python
-| 12  | [Challenge 12](https://adventofcode.com/2022/day/12) | Csharp | FSharp | Typescript | Rust | Python
+| 12  | [Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) | [Csharp](src/aoc-csharp/puzzles/Day12.cs) | FSharp | Typescript | Rust | Python
 | 13  | [Challenge 13](https://adventofcode.com/2022/day/13) | Csharp | FSharp | Typescript | Rust | Python
 | 14  | [Challenge 14](https://adventofcode.com/2022/day/14) | Csharp | FSharp | Typescript | Rust | Python
 | 15  | [Challenge 15](https://adventofcode.com/2022/day/15) | Csharp | FSharp | Typescript | Rust | Python

@@ -5,7 +5,7 @@ public sealed class Day10 : PuzzleBaseLines
     private static readonly Func<int, bool> IsControlCycle = (int cycle) => cycle == 20 || (cycle > 20 && (cycle - 20) % 40 == 0);
     public override string? FirstPuzzle()
     {
-        var instructions = _input
+        var instructions = Data
             .Select(line => line.Split(" ").ToArray())
             .Select(line => new Instruction(line[0], line.Length > 1 ? int.Parse(line[1]) : 0))
             .ToArray();
@@ -42,7 +42,7 @@ public sealed class Day10 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var instructions = _input
+        var instructions = Data
             .Select(line => line.Split(" ").ToArray())
             .Select(line => new Instruction(line[0], line.Length > 1 ? int.Parse(line[1]) : 0))
             .ToArray();

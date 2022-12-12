@@ -6,9 +6,9 @@ public sealed class Day06 : PuzzleBaseText
     {
         var uniqueSequenceLength = 4;
         int pos = uniqueSequenceLength;
-        for (; pos < _input.Length; pos++)
+        for (; pos < Data.Length; pos++)
         {
-            var seq = _input[(pos - uniqueSequenceLength)..pos];
+            var seq = Data[(pos - uniqueSequenceLength)..pos];
             Printer.DebugMsg($"Sequence: {seq}");
             if(seq.Distinct().Count() == seq.Length)
             {
@@ -23,9 +23,9 @@ public sealed class Day06 : PuzzleBaseText
     {
         var uniqueSequenceLength = 14;
         int pos = uniqueSequenceLength;
-        for (; pos < _input.Length; pos++)
+        for (; pos < Data.Length; pos++)
         {
-            var seq = _input[(pos - uniqueSequenceLength)..pos];
+            var seq = Data[(pos - uniqueSequenceLength)..pos];
             Printer.DebugMsg($"Sequence: {seq}");
             if(seq.Distinct().Count() == seq.Length)
             {

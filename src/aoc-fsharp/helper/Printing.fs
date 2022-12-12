@@ -5,8 +5,14 @@ open aoc_fsharp.helper.literals
 open aoc_fsharp.helper.util
 open aoc_fsharp.helper.records
 
+let consoleWidth = 
+    try 
+        Console.WindowWidth - 1
+    with
+        | _ -> 80
+
 let separator =
-    [ (SeparatorChar, Console.WindowWidth - 1) ]
+    [ (SeparatorChar, consoleWidth) ]
     |> Seq.collect repeat
     |> Array.ofSeq
     |> String

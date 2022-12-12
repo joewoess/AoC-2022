@@ -1,4 +1,5 @@
 namespace aoc_csharp;
+using System.Numerics;
 
 public static class Util
 {
@@ -21,6 +22,7 @@ public static class Util
             : Enumerable.Range(from, to - from + 1);
     }
 
+    /** Executes the action count times */
     public static void DoTimes(this int count, Action action)
     {
         foreach (var _ in Range(1, count))
@@ -29,16 +31,20 @@ public static class Util
         }
     }
 
-    public static (string First, string Second) SplitToPair(this string str, string seperator = ",")
+    /** If a string has two value split by a seperator, this parses it into a pair of 2 strings */
+    public static (T First, T Second) SplitToPair<T>(this string str, Func<string, T> mapFirst, Func<string, T> mapSecond, string seperator = ",")
     {
         var parts = str.Split(seperator);
-        if(parts.Length != 2)
-            throw new ArgumentException($"Expected 2 parts, got {parts.Length}.");
-        return (parts[0], parts[1]);
+        if (parts.Length != 2)
+        {
+            Printer.DebugMsg($"Expected 2 parts in string '{str}' but got {parts.Length}");
+        }
+        return (mapFirst(parts[0]), mapSecond(parts[1]));
     }
+    public static (T First, T Second) SplitToPair<T>(this string str, Func<string, T> mapBoth, string seperator = ",") => str.SplitToPair(mapBoth, mapBoth, seperator);
+    public static (string First, string Second) SplitToPair(this string str, string seperator = ",") => str.SplitToPair(s => s, seperator);
+    public static (T First, T Second) ApplyToPair<T>(this (T First, T Second) pair, Func<T, T> func) => (func.Invoke(pair.First), func.Invoke(pair.Second));
 
-    public static (string First, string Second) ApplyToPair(this (string First, string Second) pair, Func<string, string> func)
-    {
-        return (func.Invoke(pair.First), func.Invoke(pair.Second));
-    }
+    /** Extension function to check if a number is between two other numbers */
+    public static bool BetweenIncl<T>(this T num, T min, T max) where T : INumber<T> => (num >= min) && (num <= max);
 }

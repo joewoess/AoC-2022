@@ -4,14 +4,14 @@ public sealed class Day05 : PuzzleBaseLines
 {
     public override string? FirstPuzzle()
     {
-        var (initialStacks, amountOfStacks) = ReadInitialLoad(_input);
+        var (initialStacks, amountOfStacks) = ReadInitialLoad(Data);
         var stacks = Util.InitializeListWithDefault(amountOfStacks, () => new Stack<char>());
 
         Printer.DebugMsg($"There are {stacks.Count} stacks.");
         PopulateWithInitial(stacks, initialStacks);
         Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
 
-        var moves = _input
+        var moves = Data
             .Skip(initialStacks.Count + 2)
             .Select(line => line.Split(" "))
             .Select(parts => (amount: int.Parse(parts[1]), from: int.Parse(parts[3]) - 1, to: int.Parse(parts[5]) - 1))
@@ -33,14 +33,14 @@ public sealed class Day05 : PuzzleBaseLines
 
     public override string? SecondPuzzle()
     {
-        var (initialStacks, amountOfStacks) = ReadInitialLoad(_input);
+        var (initialStacks, amountOfStacks) = ReadInitialLoad(Data);
         var stacks = Util.InitializeListWithDefault(amountOfStacks, () => new Stack<char>());
 
         Printer.DebugMsg($"There are {stacks.Count} stacks.");
         PopulateWithInitial(stacks, initialStacks);
         Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
 
-        var moves = _input
+        var moves = Data
             .Skip(initialStacks.Count + 2)
             .Select(line => line.Split(" "))
             .Select(parts => (amount: int.Parse(parts[1]), from: int.Parse(parts[3]) - 1, to: int.Parse(parts[5]) - 1))

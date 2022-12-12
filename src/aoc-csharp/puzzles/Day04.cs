@@ -5,8 +5,8 @@ public sealed class Day04 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var score = 0;
-        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = _input
-            .Select(line => Util.SplitToPair(line))
+        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = Data
+            .Select(line => line.SplitToPair())
             .Select(pairs =>  (elfA: Util.SplitToPair(pairs.First, "-"), elfB: Util.SplitToPair(pairs.Second, "-")))
             .Select(ranges => ((int.Parse(ranges.elfA.First), int.Parse(ranges.elfA.Second)), (int.Parse(ranges.elfB.First), int.Parse(ranges.elfB.Second))))
             .ToList();
@@ -31,8 +31,8 @@ public sealed class Day04 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var score = 0;
-        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = _input
-            .Select(line => Util.SplitToPair(line))
+        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = Data
+            .Select(line => line.SplitToPair())
             .Select(pairs =>  (elfA: Util.SplitToPair(pairs.First, "-"), elfB: Util.SplitToPair(pairs.Second, "-")))
             .Select(ranges => ((int.Parse(ranges.elfA.First), int.Parse(ranges.elfA.Second)), (int.Parse(ranges.elfB.First), int.Parse(ranges.elfB.Second))))
             .ToList();

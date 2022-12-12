@@ -6,7 +6,7 @@ public sealed class Day03 : PuzzleBaseLines
     {
         var score = 0;
         // Compartments A and B are split in the middle of a line
-        List<(string A, string B)> rucksacks = _input
+        List<(string A, string B)> rucksacks = Data
             .Select(x => (x.Substring(0, x.Length / 2), x.Substring(x.Length / 2)))
             .ToList();
 
@@ -34,7 +34,7 @@ public sealed class Day03 : PuzzleBaseLines
     {
         var score = 0;
         // Groups of 3 lines have a common badge 
-        var rucksackGroups = _input.Chunk(3).ToList();
+        var rucksackGroups = Data.Chunk(3).ToList();
         foreach (var group in rucksackGroups)
         {
             var commonChars = group[0]

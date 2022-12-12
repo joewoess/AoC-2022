@@ -6,15 +6,15 @@ public sealed class Day12 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var grid = new Dictionary<Point, HeightValue>();
-        _input
+        Data
             .Select(line => line.Select(c => new HeightValue(c)).ToArray())
             .Select((line, lineIdx) => line.Select((h, posIdx) => (Pos: new Point(posIdx, lineIdx), Height: h)).ToArray())
             .SelectMany(x => x)
             .ToList()
             .ForEach(x => grid.Add(x.Pos, x.Height));
 
-        var mapHeight = _input.Length;
-        var mapWidth = _input[0].Length;
+        var mapHeight = Data.Length;
+        var mapWidth = Data[0].Length;
 
         var start = grid.Where(entry => entry.Value.IsStart).Select(e => e.Key).Single();
         var goal = grid.Where(entry => entry.Value.IsEnd).Select(e => e.Key).Single();
@@ -51,7 +51,7 @@ public sealed class Day12 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var grid = new Dictionary<Point, HeightValue>();
-        _input
+        Data
             // ignore given start because we need to find all possible starts
             .Select(line => line.Select(c => new HeightValue(c == 'S' ? 'a' : c)).ToArray())
             .Select((line, lineIdx) => line.Select((h, posIdx) => (Pos: new Point(posIdx, lineIdx), Height: h)).ToArray())
@@ -59,8 +59,8 @@ public sealed class Day12 : PuzzleBaseLines
             .ToList()
             .ForEach(x => grid.Add(x.Pos, x.Height));
 
-        var mapHeight = _input.Length;
-        var mapWidth = _input[0].Length;
+        var mapHeight = Data.Length;
+        var mapWidth = Data[0].Length;
 
         var possibleStarts = grid.Where(entry => entry.Value.Height == 0).Select(e => e.Key).ToList();
         Printer.DebugPrintExcerpt(possibleStarts, "Possible starts are: ");
