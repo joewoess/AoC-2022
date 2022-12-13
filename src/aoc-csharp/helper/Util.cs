@@ -47,4 +47,10 @@ public static class Util
 
     /** Extension function to check if a number is between two other numbers */
     public static bool BetweenIncl<T>(this T num, T min, T max) where T : INumber<T> => (num >= min) && (num <= max);
+
+    /** Extension function to get the string representation of a list */
+    public static string ToListString<T>(this IEnumerable<T>? list, string? seperator = ",", string? prefix = "[", string? postfix = "]")
+        => list != null
+            ? $"{prefix}{string.Join(seperator, list)}{postfix}"
+            : $"{prefix}{postfix}";
 }
