@@ -69,7 +69,7 @@ public static class Printer
     /** Prints the result of the last day with an implementation in the result table */
     public static void PrintLastSolutionMessage()
     {
-        var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => !(entry.Value.Count == 1 && entry.Value.First() == Puzzles.NoImplementation)).Key;
+        var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => entry.Value.Count > 0 && entry.Value.FirstOrDefault() != Puzzles.NoImplementation).Key;
         Printer.PrintSolutionMessage(lastDay);
     }
 
