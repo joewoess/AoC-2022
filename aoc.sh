@@ -78,23 +78,18 @@ exec_command=""
 
 # Execute the appropriate command based on the input flags
 if $csharp; then
-  # Execute csharp solution with the given arguments
   cd "./src/aoc-csharp/" || exit 1
   exec_command="dotnet run $@"
 elif $fsharp; then
-  # Execute fsharp solution with the given arguments
   cd "./src/aoc-fsharp/" || exit 1
   exec_command="dotnet run $@"
 elif $typescript; then
-  # Execute typescript solution with the given arguments
   cd "./src/aoc-typescript/" || exit 1
   exec_command="ts-node $@"
 elif $python; then
-  # Execute python solution with the given arguments
   cd "./src/aoc-python/" || exit 1
   exec_command="python3 $@" 
 elif $rust; then
-  # Execute rust solution with the given arguments
   cd "./src/aoc-rust/" || exit 1
   exec_command="cargo run $@"
 else
@@ -106,24 +101,19 @@ fi
 
 # Add the universal flags like --last to the command
 if $last; then
-  # Execute csharp solution with the given arguments
   exec_command="$exec_command --last"
 fi
 if $debug; then
-  # Execute fsharp solution with the given arguments
   exec_command="$exec_command --debug"
 fi
 if $demo; then
-  # Execute typescript solution with the given arguments
   exec_command="$exec_command --demo"
 fi
 if $first; then
-  # Execute typescript solution with the given arguments
   exec_command="$exec_command --first"
 fi
 
 if $second; then
-  # Execute typescript solution with the given arguments
   exec_command="$exec_command --second"
 fi
 
