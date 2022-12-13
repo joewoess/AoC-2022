@@ -58,7 +58,7 @@ public static class PathFinding
         public override string ToString() => $"{Position} = {Distance}";
     }
 
-    public static Field? CrawlPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+    public static Field? AStarFindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
         // default distance function is manhattan distance
@@ -95,7 +95,7 @@ public static class PathFinding
     public static List<Point>? FindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
-        return CrawlPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals) is Field path
+        return AStarFindPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals) is Field path
             ? ReconstructPath(path)
             : null;
     }
@@ -103,7 +103,7 @@ public static class PathFinding
     public static int? FindPathDistance(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
-        return CrawlPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals)?.Cost;
+        return AStarFindPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals)?.Cost;
     }
 
     public static List<Point> ReconstructPath(Field current)
