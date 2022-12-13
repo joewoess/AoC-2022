@@ -1,10 +1,11 @@
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
 public static class Config
 {
     // Paths
 
     public const string InputPathReal = "../../data/real/";
     public const string InputPathDemo = "../../data/demo/";
+    public const string OutputHeaderPath = "../../HEADER";
 
     // Settings
 
@@ -14,18 +15,11 @@ public static class Config
     public static bool ShowFirst = true;
     public static bool ShowSecond = true;
 
-    public static bool TryAndUseConsoleWidth = false;
-    public static bool PrintAfterLastImpl = false;
-
-
+    public static readonly bool TryAndUseConsoleWidth = false;
+    public static readonly bool PrintAfterLastImpl = false;
+    
     // Messages
-
-    public static string[] GreetingMessageLines = new string[] {
-            "AdventOfCode Runner for 2022",
-            "Challenge at: https://adventofcode.com/2022/",
-            "Author: Johannes Wöß",
-            "Written in C# 11 / .NET 7"
-        };
+    public static readonly string[] GreetingMessageLines = File.ReadAllLines(OutputHeaderPath);
 
     public const string NoSolutionMessage = "NO IMPL";
     public const string NoDataMessage = "NO DATA";

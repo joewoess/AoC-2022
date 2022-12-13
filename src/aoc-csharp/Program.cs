@@ -1,4 +1,4 @@
-﻿using aoc_csharp;
+﻿global using aoc_csharp.helper;
 
 Config.IsDemo = args.Contains("--demo");
 Config.IsDebug = args.Contains("--debug");
@@ -8,12 +8,13 @@ Config.ShowSecond = !args.Contains("--first") || args.Contains("--second");
 
 
 var explicitDaysRequested = args
-                            .Where(arg => arg.All(char.IsDigit))
-                            .Select(int.Parse)
-                            .Where(day => day.BetweenIncl(1, Config.MaxChallengeDays))
-                            .ToList();
+    .Where(arg => arg.All(char.IsDigit))
+    .Select(int.Parse)
+    .Where(day => day.BetweenIncl(1, Config.MaxChallengeDays))
+    .ToList();
 
-var longestMessage = $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |  ExplicitDays: [{string.Join(",", explicitDaysRequested)}]";
+var longestMessage =
+    $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |  ExplicitDays: [{string.Join(",", explicitDaysRequested)}]";
 
 Printer.ConsoleWidth = longestMessage.Length;
 if (Config.TryAndUseConsoleWidth) Printer.TryUpdateConsoleWidth();
@@ -24,6 +25,6 @@ Printer.DebugMsg($"Found {Puzzles.ImplementedPuzzles.Count} implementations");
 Printer.PrintSeparator(onlyDuringDebug: true);
 Printer.PrintResultHeader();
 
-if (explicitDaysRequested.Count > 0) explicitDaysRequested.ForEach(day => Printer.PrintSolutionMessage(day));
+if (explicitDaysRequested.Count > 0) explicitDaysRequested.ForEach(Printer.PrintSolutionMessage);
 if (Config.ShowLast) Printer.PrintLastSolutionMessage();
 if (explicitDaysRequested.Count == 0 && !Config.ShowLast) Printer.PrintAllSolutionMessages();

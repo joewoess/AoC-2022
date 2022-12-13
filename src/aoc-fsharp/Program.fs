@@ -11,10 +11,9 @@ open aoc_fsharp.helper.util
 let main (args: string []) : int =
     let IsDebug = args |> Array.contains "--debug"
     let IsDemo = args |> Array.contains "--demo"
+    let OnlyLast = args |> Array.contains "--last"
     let OnlyFirst = args |> Array.contains "--first"
     let OnlySecond = args |> Array.contains "--second"
-
-    let OnlyLast = args |> Array.contains "--last"
 
     let dayNumberParams =
         args
@@ -35,8 +34,7 @@ let main (args: string []) : int =
                   InputFile = GetInputFileForDay false idx
                   TestInputFile = GetInputFileForDay true idx })
     
-    
-    DebugMsg IsDebug $"Day01: %A{Array.head allDays}"
+    //DebugMsg IsDebug $"Day01: %A{Array.head allDays}"
 
     let whatIsAvailable =
         allDays
@@ -71,8 +69,7 @@ let main (args: string []) : int =
 
     PrintGreeting()
 
-    DebugMsg IsDebug $"IsDemo[%b{IsDemo}] IsDebug[%b{IsDebug}] ShowLast[%b{OnlyLast}] OnlyFirst[%b{OnlyFirst}] OnlySecond[%b{OnlySecond}]"
-    DebugMsg IsDebug $"DayNumbers =%A{dayNumberParams}"
+    DebugMsg IsDebug $"IsDemo[%b{IsDemo}] IsDebug[%b{IsDebug}] ShowLast[%b{OnlyLast}] OnlyFirst[%b{OnlyFirst}] OnlySecond[%b{OnlySecond}] DayNumbers[%A{dayNumberParams}]"
     DebugMsg IsDebug $"Available  #=%A{MapToDayNumber whatIsAvailable}"
     DebugMsg IsDebug $"ToDisplay  #=%A{MapToDayNumber whatToDisplay}"
 

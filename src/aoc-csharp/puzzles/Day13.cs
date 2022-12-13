@@ -5,20 +5,21 @@ public sealed class Day13 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var listPairs = Data
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Select(line => ParseListFromLine(line))
-                    .Chunk(2)
-                    .Select(chunk => (Left: chunk[0], Right: chunk[1]))
-                    .ToList();
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(ParseListFromLine)
+            .Chunk(2)
+            .Select(chunk => (Left: chunk[0], Right: chunk[1]))
+            .ToList();
 
         Printer.DebugMsg($"Found {listPairs.Count} pairs of lists");
 
         var correctIndices = new List<int>();
 
-        foreach (var ((left, right), idx) in listPairs.Select((pair, idx) => (pair, idx)))
-        {
-            if (IsCorrectOrder(left, right) == CorrectOrder.Correct) { correctIndices.Add(idx + 1); }
-        }
+        listPairs
+            .Select((pair, idx) => (pair, idx))
+            .Where((pairWithIdx) => IsCorrectOrder(pairWithIdx.pair.Left, pairWithIdx.pair.Right) == CorrectOrder.Correct)
+            .ToList()
+            .ForEach(pairWithIdx => correctIndices.Add(pairWithIdx.idx + 1));
 
         Printer.DebugMsg($"Found {correctIndices.Count} correct indices: ({string.Join(", ", correctIndices)})");
         Printer.DebugMsg($"Sum of them is {correctIndices.Sum()}");
@@ -28,10 +29,10 @@ public sealed class Day13 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var listPairs = Data
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Select(line => ParseListFromLine(line))
-                    .Select(list => list)
-                    .ToList();
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(ParseListFromLine)
+            .Select(list => list)
+            .ToList();
 
         Printer.DebugMsg($"Found {listPairs.Count} lists.");
 
@@ -67,30 +68,46 @@ public sealed class Day13 : PuzzleBaseLines
             var listIdx = 0;
             while (isCorrectOrder == CorrectOrder.Continue)
             {
-                if (listIdx >= left.NestedList?.Length && listIdx < right.NestedList?.Length) return CorrectOrder.Correct;
-                if (listIdx < left.NestedList?.Length && listIdx >= right.NestedList?.Length) return CorrectOrder.InCorrect;
-                if (listIdx >= left.NestedList?.Length && listIdx >= right.NestedList?.Length) return CorrectOrder.Continue;
+                if (listIdx >= left.NestedList?.Length && listIdx < right.NestedList?.Length)
+                    return CorrectOrder.Correct;
+                if (listIdx < left.NestedList?.Length && listIdx >= right.NestedList?.Length)
+                    return CorrectOrder.InCorrect;
+                if (listIdx >= left.NestedList?.Length && listIdx >= right.NestedList?.Length)
+                    return CorrectOrder.Continue;
                 isCorrectOrder = IsCorrectOrder(left.NestedList![listIdx], right.NestedList![listIdx]);
 
-                if (isCorrectOrder != CorrectOrder.Continue) { return isCorrectOrder; }
+                if (isCorrectOrder != CorrectOrder.Continue)
+                {
+                    return isCorrectOrder;
+                }
+
                 listIdx++;
             }
         }
         else
         {
-            if (left.IsInteger && right.IsList) { return IsCorrectOrder(new ListOrValue(null, new[] { left }), right); }
-            if (left.IsList && right.IsInteger) { return IsCorrectOrder(left, new ListOrValue(null, new[] { right })); }
+            if (left.IsInteger && right.IsList)
+            {
+                return IsCorrectOrder(new ListOrValue(null, new[] { left }), right);
+            }
+
+            if (left.IsList && right.IsInteger)
+            {
+                return IsCorrectOrder(left, new ListOrValue(null, new[] { right }));
+            }
         }
 
         // should never happen
         Printer.DebugMsg($"IsCorrectOrder could not determine if it was correct. Defaulting to InCorrect");
         return CorrectOrder.InCorrect;
     }
+
     private static ListOrValue ParseListFromLine(String line)
     {
         var idx = 0;
         return ParseLineRecursive(line, ref idx, 0).NestedList![0];
     }
+
     private static ListOrValue ParseLineRecursive(String line, ref int index, int depth)
     {
         var result = new List<ListOrValue>();
@@ -171,5 +188,11 @@ public sealed class Day13 : PuzzleBaseLines
                 };
         }
     }
-    private enum CorrectOrder { Correct, InCorrect, Continue };
+
+    private enum CorrectOrder
+    {
+        Correct,
+        InCorrect,
+        Continue
+    };
 }

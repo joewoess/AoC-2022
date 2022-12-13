@@ -24,8 +24,10 @@ public sealed class Day05 : PuzzleBaseLines
             {
                 stacks[item.to].Push(stacks[item.from].Pop());
             }
+
             Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
         }
+
         var result = string.Join("", stacks.Select(s => s.FirstOrDefault()));
         Printer.DebugMsg($"Final top crates are {result}.");
         return result;
@@ -55,12 +57,15 @@ public sealed class Day05 : PuzzleBaseLines
             {
                 exchangeStack.Push(stacks[item.from].Pop());
             }
+
             for (int i = 0; i < item.amount; i++)
             {
                 stacks[item.to].Push(exchangeStack.Pop());
             }
+
             Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
         }
+
         var result = string.Join("", stacks.Select(s => s.FirstOrDefault()));
         Printer.DebugMsg($"Final top crates are {result}.");
         return result;
@@ -75,9 +80,11 @@ public sealed class Day05 : PuzzleBaseLines
             {
                 break;
             }
+
             initialStacks.Add(line);
         }
-        var amountOfStacks = initialStacks.Last().Split(" ").Where(split => !string.IsNullOrWhiteSpace(split)).Count();
+
+        var amountOfStacks = initialStacks.Last().Split(" ").Count(split => !string.IsNullOrWhiteSpace(split));
         initialStacks.Remove(initialStacks.Last());
 
         Printer.DebugMsg($"There are {amountOfStacks} Stacks with initial load of:\n{string.Join("\n", initialStacks)}");
@@ -86,7 +93,8 @@ public sealed class Day05 : PuzzleBaseLines
         return (initialStacks, amountOfStacks);
     }
 
-    private static void PopulateWithInitial (List<Stack<char>> stacks, List<string> initialInput) {
+    private static void PopulateWithInitial(List<Stack<char>> stacks, List<string> initialInput)
+    {
         var at = (int i) => i * 4 + 1;
         foreach (var line in initialInput)
         {

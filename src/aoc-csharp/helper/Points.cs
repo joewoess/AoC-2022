@@ -1,4 +1,4 @@
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
 
 public readonly record struct Point(int X, int Y)
 {
@@ -20,6 +20,7 @@ public enum Direction
 public static class PointerExtensions
 {
     // stepping
+
     public static Point StepInDirection(this Point currentPoint, Direction dir)
     {
         return dir switch
@@ -39,18 +40,18 @@ public static class PointerExtensions
     public static Point StepTowards(this Point currentPoint, Point target, bool allowDiagonal = true, bool preferDiagonal = true, bool preferHorizontalOverVertical = true)
     {
         if (currentPoint == target) return currentPoint;
-        var xDiff = target.X - currentPoint.X;
-        var xStep = Math.Abs(xDiff) > 0 ? 1 * Math.Sign(xDiff) : 0;
-        var yDiff = target.Y - currentPoint.Y;
-        var yStep = Math.Abs(yDiff) > 0 ? 1 * Math.Sign(yDiff) : 0;
-        // move diagonal
-        if (allowDiagonal && preferDiagonal) return new Point(currentPoint.X + xStep, currentPoint.Y + yStep);
-        if (allowDiagonal && !preferDiagonal && Math.Abs(currentPoint.X - target.X) == Math.Abs(currentPoint.Y - target.Y)) return new Point(currentPoint.X + xStep, currentPoint.Y + yStep);
-        // move horizontal
-        if (preferHorizontalOverVertical && Math.Abs(currentPoint.X - target.X) != 0) return new Point(currentPoint.X + xStep, currentPoint.Y);
-        if (!preferHorizontalOverVertical && Math.Abs(currentPoint.Y - target.Y) == 0) return new Point(currentPoint.X + xStep, currentPoint.Y);
-        // move vertical
-        return new Point(currentPoint.X, currentPoint.Y + yStep);
+        var (xStep, yStep) = currentPoint.CalculateStepTowards(target);
+        return (allowDiagonal, preferDiagonal, preferHorizontalOverVertical) switch
+        {
+            // move diagonal
+            (true, true, _) => new Point(currentPoint.X + xStep, currentPoint.Y + yStep),
+            (true, false, _) when Math.Abs(currentPoint.X - target.X) == Math.Abs(currentPoint.Y - target.Y) => new Point(currentPoint.X + xStep, currentPoint.Y + yStep),
+            // move horizontal
+            (_, _, true) when Math.Abs(currentPoint.X - target.X) != 0 => new Point(currentPoint.X + xStep, currentPoint.Y),
+            (_, _, false) when Math.Abs(currentPoint.Y - target.Y) == 0 => new Point(currentPoint.X + xStep, currentPoint.Y),
+            // move vertical
+            _ => new Point(currentPoint.X, currentPoint.Y + yStep),
+        };
     }
 
     public static char GetDirectionCharTowards(this Point currentPoint, Point target)
@@ -73,20 +74,20 @@ public static class PointerExtensions
         };
     }
 
+    private static (int xStep, int yStep) CalculateStepTowards(this Point currentPoint, Point target)
+    {
+        var (xDiff, yDiff) = (target.X - currentPoint.X, target.Y - currentPoint.Y);
+        return (Math.Clamp(xDiff, -1, 1), Math.Clamp(yDiff, -1, 1));
+    }
+
     // comparisons
 
-    public static bool IsWithinReach(this Point currentPoint, Point target)
-    {
-        return Math.Abs(currentPoint.X - target.X) <= 1 && Math.Abs(currentPoint.Y - target.Y) <= 1;
-    }
+    public static bool IsWithinReach(this Point currentPoint, Point target) => Math.Abs(currentPoint.X - target.X) <= 1 && Math.Abs(currentPoint.Y - target.Y) <= 1;
+
     public static Direction GetDirectionTowards(this Point currentPoint, Point target)
     {
         if (currentPoint == target) return Direction.Up;
-        var xDiff = target.X - currentPoint.X;
-        var xStep = Math.Abs(xDiff) > 0 ? 1 * Math.Sign(xDiff) : 0;
-        var yDiff = target.Y - currentPoint.Y;
-        var yStep = Math.Abs(yDiff) > 0 ? 1 * Math.Sign(yDiff) : 0;
-        return (xStep, yStep) switch
+        return currentPoint.CalculateStepTowards(target) switch
         {
             (1, 0) => Direction.Right,
             (-1, 0) => Direction.Left,
@@ -123,8 +124,8 @@ public static class PointerExtensions
     public static IEnumerable<Point> GetNeighborPoints(this Point currentPoint, bool allowDiagonal = true)
     {
         var directions = allowDiagonal
-        ? new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight }
-        : new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right };
+            ? new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight }
+            : new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right };
         return directions.Select(dir => currentPoint.StepInDirection(dir));
     }
 }

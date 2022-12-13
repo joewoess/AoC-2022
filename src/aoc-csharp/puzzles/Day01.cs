@@ -5,7 +5,7 @@ public sealed class Day01 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var sum = 0;
-        List<int> numbers = new List<int>();
+        var numbers = new List<int>();
         foreach (var line in Data)
         {
             if (string.IsNullOrWhiteSpace(line))
@@ -29,7 +29,7 @@ public sealed class Day01 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var sum = 0;
-        List<int> numbers = new List<int>();
+        var numbers = new List<int>();
         foreach (var line in Data)
         {
             if (string.IsNullOrWhiteSpace(line))

@@ -1,22 +1,34 @@
 using System.Reflection;
 
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
+
 public static class Printer
 {
-    public static (string Message, int Padding)[] ColumnHeaders { get; } = new[] {
+    private static (string Message, int Padding)[] ColumnHeaders { get; } =
+    {
         ("Day", Config.InfoColumnPadding),
         ("Type", Config.InfoColumnPadding),
         ("1st", Config.ResultColumnPadding),
-        ("2nd", Config.ResultColumnPadding) };
+        ("2nd", Config.ResultColumnPadding)
+    };
 
-    /** The estimated width of the console window use for printing the seperator line */
+    /** The estimated width of the console window use for printing the separator line */
     public static int ConsoleWidth { get; set; } = 105;
 
     /** Try and update the console width. This can fail if the console isn't a real console, e.g. when running emulated */
-    public static int TryUpdateConsoleWidth()
+    public static bool TryUpdateConsoleWidth()
     {
-        try { ConsoleWidth = Console.WindowWidth; } catch { Printer.DebugMsg($"Could not set console width.  Defaulting to {ConsoleWidth} (Covers early debug logs)"); }
-        return ConsoleWidth;
+        try
+        {
+            ConsoleWidth = Console.WindowWidth;
+            return true;
+        }
+        catch
+        {
+            DebugMsg($"Could not set console width.  Defaulting to {ConsoleWidth} (Covers early debug logs)");
+        }
+
+        return false;
     }
 
     /** Prints the beginning header of console output */
@@ -34,13 +46,14 @@ public static class Printer
     /** Prints the result of a days puzzle in the result table */
     public static void PrintSolutionMessage(int day)
     {
-        var implementationsOfDay = Puzzles.PuzzleImplementationDict[day] ?? new List<IPuzzle> { Puzzles.NoImplementation };
+        var implementationsOfDay = Puzzles.PuzzleImplementationDict[day];
         foreach (var impl in implementationsOfDay)
         {
             var firstPuzzle = Config.ShowFirst ? impl.FirstResult : Config.SkippedMessage;
             var secondPuzzle = Config.ShowSecond ? impl.SecondResult : Config.SkippedMessage;
 
-            var columnsToPrint = new (string Message, int Padding)[] {
+            var columnsToPrint = new (string Message, int Padding)[]
+            {
                 (string.Format(Config.DayMessageConvention, day), Config.InfoColumnPadding),
                 (impl.TypeName, Config.InfoColumnPadding),
                 (firstPuzzle, Config.ResultColumnPadding),
@@ -56,21 +69,29 @@ public static class Printer
     {
         if (!Config.PrintAfterLastImpl)
         {
-            var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => !(entry.Value.Count == 1 && entry.Value.First() == Puzzles.NoImplementation)).Key;
-            Puzzles.PuzzleImplementationDict.Keys.Where(day => day <= lastDay).ToList().ForEach(day => PrintSolutionMessage(day));
+            var lastDay = Puzzles.PuzzleImplementationDict
+                .Last(entry => !(entry.Value.Count > 0 && entry.Value.First() == Puzzles.NoImplementation))
+                .Key;
+            Puzzles.PuzzleImplementationDict.Keys
+                .Where(day => day <= lastDay)
+                .ToList()
+                .ForEach(PrintSolutionMessage);
         }
         else
         {
-            Puzzles.PuzzleImplementationDict.Keys.ToList().ForEach(day => PrintSolutionMessage(day));
+            Puzzles.PuzzleImplementationDict.Keys
+                .ToList()
+                .ForEach(PrintSolutionMessage);
         }
-
     }
 
     /** Prints the result of the last day with an implementation in the result table */
     public static void PrintLastSolutionMessage()
     {
-        var lastDay = Puzzles.PuzzleImplementationDict.Last(entry => entry.Value.Count > 0 && entry.Value.FirstOrDefault() != Puzzles.NoImplementation).Key;
-        Printer.PrintSolutionMessage(lastDay);
+        var lastDay = Puzzles.PuzzleImplementationDict
+            .Last(entry => entry.Value.Count > 0 && entry.Value.FirstOrDefault() != Puzzles.NoImplementation)
+            .Key;
+        PrintSolutionMessage(lastDay);
     }
 
     /** Prints a header for the results table */
@@ -93,13 +114,14 @@ public static class Printer
     }
 
     /** Print a collection only up to a certain amount */
-    public static void DebugPrintExcerpt<T>(IEnumerable<T> collection, string? prefix = null, int maxCount = 10, string seperator = ", ")
+    public static void DebugPrintExcerpt<T>(IEnumerable<T> collection, string? prefix = null, int maxCount = 10, string separator = ", ")
     {
         if (Config.IsDebug)
         {
             if (prefix != null) Console.Write(prefix);
             var actuallyTaken = collection.Take(maxCount).ToList();
-            Console.WriteLine($"{string.Join(seperator, actuallyTaken)} {(actuallyTaken.Count == maxCount ? $"... and {collection.Count() - actuallyTaken.Count} more" : string.Empty)}");
+            var andMore = actuallyTaken.Count == maxCount ? $"... and {collection.Count() - actuallyTaken.Count} more" : string.Empty;
+            Console.WriteLine($"{string.Join(separator, actuallyTaken)} {andMore}");
         }
     }
 }

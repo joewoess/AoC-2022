@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # This script is used to run the AoC-2022 project.
 
 # Set default values for the flags
@@ -16,13 +15,12 @@ first=false
 second=false
 
 # Parse the flags
-while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
-  -h | --help )
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
+  case $1 in
+  -h | --help)
     echo "--------------------------------------------------------------------------------"
-    echo "AdventOfCode Runner for 2022" 
-    echo "Challenge at: https://adventofcode.com/2022/"
-    echo "Author: Johannes Wöß"
-    echo "Written in F# 7 / .NET 7"
+    cat ./HEADER
+    echo ""
     echo "--------------------------------------------------------------------------------"
     echo "Usage: ./aoc.sh [options] [arguments]"
     echo "Arguments: "
@@ -41,37 +39,39 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
     echo "  -r       |     --rust"
     exit
     ;;
-  -cs | --csharp )
+  -cs | --csharp)
     csharp=true
     ;;
-  -fs | --fsharp )
+  -fs | --fsharp)
     fsharp=true
     ;;
-  -py | --python )
+  -py | --python)
     python=true
     ;;
-  -ts | --typescript )
+  -ts | --typescript)
     typescript=true
     ;;
-  -r | --rust )
+  -r | --rust)
     rust=true
     ;;
-  --last )
+  --last)
     last=true
     ;;
-  --debug )
+  --debug)
     debug=true
     ;;
-  --demo )
+  --demo)
     demo=true
     ;;
-  --first )
+  --first)
     first=true
     ;;
-  --second )
+  --second)
     second=true
     ;;
-esac; shift; done
+  esac
+  shift
+done
 if [[ "$1" == '--' ]]; then shift; fi
 
 exec_command=""
@@ -88,7 +88,7 @@ elif $typescript; then
   exec_command="ts-node $@"
 elif $python; then
   cd "./src/aoc-python/" || exit 1
-  exec_command="python3 $@" 
+  exec_command="python3 $@"
 elif $rust; then
   cd "./src/aoc-rust/" || exit 1
   exec_command="cargo run $@"

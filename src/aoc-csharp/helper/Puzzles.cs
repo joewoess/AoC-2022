@@ -1,5 +1,7 @@
 using System.Reflection;
-namespace aoc_csharp;
+
+namespace aoc_csharp.helper;
+
 public static class Puzzles
 {
     /** Gets all puzzles in the csharp.puzzles folder by naming convention 'DayXX.cs' */
@@ -10,21 +12,17 @@ public static class Puzzles
             .Cast<IPuzzle>()
             .ToList();
 
-    public static NoImplPuzzle NoImplementation { get; } = new NoImplPuzzle();
+    public static NoImplPuzzle NoImplementation { get; } = new();
 
     /** Instance the type found by reflection */
-    public static IPuzzle? GetPuzzle(Type targetType)
-    {
-        return (IPuzzle?)Activator.CreateInstance(targetType);
-    }
+    private static IPuzzle? GetPuzzle(Type targetType) => (IPuzzle?)Activator.CreateInstance(targetType);
 
     /** Gets all implementations in the csharp.puzzles folder that use the IPuzzles interface */
-    public static IEnumerable<Type> GetImplementedTypesFromNamespace()
+    private static IEnumerable<Type> GetImplementedTypesFromNamespace()
     {
         return Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract)
+            .Where(t => t is { IsClass: true, IsAbstract: false })
             .Where(t => string.Equals(t.Namespace, Config.ImplementationNamespace, StringComparison.OrdinalIgnoreCase))
-            //.Where(t => t is IPuzzle)
             .Where(t => !t.Name.Contains('<') && t.Name.StartsWith("Day"))
             .OrderBy(t => t.Name);
     }
@@ -33,5 +31,9 @@ public static class Puzzles
         Util.Range(1, Config.MaxChallengeDays)
             .ToDictionary(
                 day => day,
-                day => ImplementedPuzzles.Where(puzzle => int.Parse(string.Join("", puzzle.TypeName.Where(char.IsDigit))) == day).ToList() ?? new List<IPuzzle> { NoImplementation });
+                day => ImplementedPuzzles
+                    .Where(puzzle => ParseDay(puzzle.TypeName) == day)
+                    .ToList());
+
+    private static int? ParseDay(string input) => int.TryParse(string.Join("", input.Where(char.IsDigit)), out var day) ? day : null;
 }

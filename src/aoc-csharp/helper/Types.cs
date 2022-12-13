@@ -1,11 +1,10 @@
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
 
 /** Base interface for all puzzle implementations */
 public interface IPuzzle
 {
     string TypeName => GetType().Name;
     string DataFileName => $"{TypeName.ToLower()}.txt";
-    //int Day => int.Parse(string.Join("", TypeName.Where(char.IsDigit)));
 
     bool WasInputSuccess();
 
@@ -21,13 +20,13 @@ public abstract class PuzzleBaseLines : IPuzzle
 {
     private readonly SuccessResult<string[]> _input;
     protected string[] Data => _input.Result ?? Array.Empty<string>();
-    public PuzzleBaseLines()
+
+    protected PuzzleBaseLines()
     {
-        _input = Input.GetInputLines(this);
+        _input = this.GetInputLines();
     }
 
     public bool WasInputSuccess() => _input.Success;
-
     public abstract string? FirstPuzzle();
     public abstract string? SecondPuzzle();
 }
@@ -38,9 +37,9 @@ public abstract class PuzzleBaseText : IPuzzle
     private readonly SuccessResult<string> _input;
     protected string Data => _input.Result ?? string.Empty;
 
-    public PuzzleBaseText()
+    protected PuzzleBaseText()
     {
-        _input = Input.GetInput(this);
+        _input = this.GetInput();
     }
 
     public bool WasInputSuccess() => _input.Success;

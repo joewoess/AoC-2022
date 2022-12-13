@@ -9,7 +9,7 @@ let consoleWidth =
     try 
         Console.WindowWidth - 1
     with
-        | _ -> 80
+        | _ -> 105
 
 let separator =
     [ (SeparatorChar, consoleWidth) ]

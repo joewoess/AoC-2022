@@ -1,10 +1,7 @@
-using static aoc_csharp.PathFinding;
-
 namespace aoc_csharp.puzzles;
 
 public sealed class Day09 : PuzzleBaseLines
 {
-
     public override string? FirstPuzzle()
     {
         var instructions = Data
@@ -34,6 +31,7 @@ public sealed class Day09 : PuzzleBaseLines
                 {
                     tailPoint = tailPoint.StepTowards(nextHeadPoint);
                 }
+
                 headPoint = nextHeadPoint;
                 fieldsVisitedByTail[tailPoint] = true;
             }
@@ -80,6 +78,7 @@ public sealed class Day09 : PuzzleBaseLines
                 rope = nextRope;
                 fieldsVisitedByTail[rope[^1]] = true;
             }
+
             if (Config.IsDebug)
             {
                 var currentRope = new Dictionary<Point, char>();
@@ -88,6 +87,7 @@ public sealed class Day09 : PuzzleBaseLines
                 {
                     currentRope[point] = idx == 0 ? 'H' : idx.ToString()[0];
                 }
+
                 var currentLayout = Grids.PointDictToGrid(currentRope, val => val == default ? "." : val.ToString());
                 Printer.DebugMsg($"Layout:\n{Grids.GridAsPrintable(currentLayout, val => val)}");
             }
@@ -100,7 +100,8 @@ public sealed class Day09 : PuzzleBaseLines
 
         return visitedFields.ToString();
     }
-    private Direction ParseDirection (string dir) => dir switch
+
+    private Direction ParseDirection(string dir) => dir switch
     {
         "U" => Direction.Up,
         "D" => Direction.Down,

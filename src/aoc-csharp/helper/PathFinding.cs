@@ -1,4 +1,5 @@
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
+
 public static class PathFinding
 {
     /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
@@ -12,7 +13,8 @@ public static class PathFinding
         }
     }
 
-    public static List<TGrid> MapNeighbors<TGrid>(this Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter, int maxHeight, int maxWidth, bool includeDiagonals = false)
+    public static List<TGrid> MapNeighbors<TGrid>(this Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+        bool includeDiagonals = false)
     {
         return currentPos
             .GetNeighborsFiltered(filter, maxHeight, maxWidth, includeDiagonals)
@@ -31,34 +33,27 @@ public static class PathFinding
 
     public static IEnumerable<TGrid> GetNeighbors<TGrid>(TGrid[][] grid, int currentY, int currentX, bool includeDiagonals = false)
     {
-        if (currentY > 0) yield return grid[currentY - 1][currentX];
-        if (currentY < grid.Length - 1) yield return grid[currentY + 1][currentX];
-        if (currentX > 0) yield return grid[currentY][currentX - 1];
-        if (currentX < grid[currentY].Length - 1) yield return grid[currentY][currentX + 1];
-
-        if (includeDiagonals)
-        {
-            if (currentY > 0 && currentX > 0) yield return grid[currentY - 1][currentX - 1];
-            if (currentY > 0 && currentX < grid[currentY].Length - 1) yield return grid[currentY - 1][currentX + 1];
-            if (currentY < grid.Length - 1 && currentX > 0) yield return grid[currentY + 1][currentX - 1];
-            if (currentY < grid.Length - 1 && currentX < grid[currentY].Length - 1) yield return grid[currentY + 1][currentX + 1];
-        }
+        return new Point(currentX, currentY)
+            .GetNeighborPoints(includeDiagonals)
+            .Where(pos => pos.X >= 0 && pos.X < grid[0].Length)
+            .Where(pos => pos.Y >= 0 && pos.Y < grid.Length)
+            .Select(pos => grid[pos.Y][pos.X]);
     }
 
     // A* implementation
 
     public sealed class Field
     {
-        public Point Position { get; set; }
-        public int Cost { get; set; }
-        public int Distance { get; set; }
+        public Point Position { get; init; }
+        public int Cost { get; init; }
+        public int Distance { get; init; }
         public int CostDistance => Cost + Distance;
-        public Field? Parent { get; set; }
+        public Field? Parent { get; init; }
 
         public override string ToString() => $"{Position} = {Distance}";
     }
 
-    public static Field? AStarFindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
+    private static Field? AStarFindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
         // default distance function is manhattan distance
@@ -90,12 +85,14 @@ public static class PathFinding
                 possibleFields.Add(neighborField);
             }
         }
+
         return null;
     }
+
     public static List<Point>? FindPath(Point start, Point end, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
         Func<Point, Point, int>? distanceFunc = null, Func<int, int>? calcCost = null, bool includeDiagonals = false)
     {
-        return AStarFindPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals) is Field path
+        return AStarFindPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals) is { } path
             ? ReconstructPath(path)
             : null;
     }
@@ -106,6 +103,7 @@ public static class PathFinding
         return AStarFindPath(start, end, filter, maxHeight, maxWidth, distanceFunc, calcCost, includeDiagonals)?.Cost;
     }
 
+    /** Reconstructs the path from the end to the start */
     public static List<Point> ReconstructPath(Field current)
     {
         var path = new List<Point>();

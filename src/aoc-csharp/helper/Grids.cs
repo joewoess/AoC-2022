@@ -1,5 +1,5 @@
 using System.Text;
-namespace aoc_csharp;
+namespace aoc_csharp.helper;
 public static class Grids
 {
     /** Maps a generic dictionary to a multidimensional grid with a given mapper function */
