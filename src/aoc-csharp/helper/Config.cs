@@ -14,6 +14,9 @@ public static class Config
     public static bool ShowLast = false;
     public static bool ShowFirst = true;
     public static bool ShowSecond = true;
+    public static bool IsInRelease = false;
+    public static bool OnlyTestCode = false;
+    public static bool RunBenchmarks = false;
 
     public static readonly bool TryAndUseConsoleWidth = false;
     public static readonly bool PrintAfterLastImpl = false;

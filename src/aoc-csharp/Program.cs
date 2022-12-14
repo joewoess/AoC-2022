@@ -1,26 +1,44 @@
 ﻿global using aoc_csharp.helper;
-using System.Reflection;
 using BenchmarkDotNet.Running;
+
+// Parse cmd line args
 
 Config.IsDemo = args.Contains("--demo");
 Config.IsDebug = args.Contains("--debug");
 Config.ShowLast = args.Contains("--last");
 Config.ShowFirst = !args.Contains("--second") || args.Contains("--first");
 Config.ShowSecond = !args.Contains("--first") || args.Contains("--second");
+Config.OnlyTestCode = args.Contains("--test");
+Config.RunBenchmarks = args.Contains("--bench") || args.Contains("--benchmark");
+Config.IsInRelease = BenchmarkConfig.IsInReleaseConfiguration();
 
-if (args.Contains("--test"))
+var explicitDaysRequested = args
+    .Where(arg => arg.All(char.IsDigit))
+    .Select(int.Parse)
+    .Where(day => day.Between(1, Config.MaxChallengeDays, true))
+    .ToList();
+
+var longestMessage =
+    $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |"
+    + $" ExplicitDays: [{string.Join(",", explicitDaysRequested)}] | IsInRelease: {Config.IsInRelease} | OnlyTestCode: {Config.OnlyTestCode} | RunBenchmarks: {Config.RunBenchmarks}";
+
+Printer.ConsoleWidth = longestMessage.Length;
+if (Config.TryAndUseConsoleWidth) Printer.TryUpdateConsoleWidth();
+Printer.PrintGreeting();
+Printer.DebugMsg(longestMessage);
+
+// Run tests or benchmarks
+
+if (Config.OnlyTestCode)
 {
     Printer.DebugMsg("Running quick coding tests...");
     Test.QuicklyTryCode();
     return;
 }
 
-if (args.Contains("--bench"))
+if (Config.RunBenchmarks)
 {
-    Printer.PrintGreeting();
-    var isRelease = BenchmarkConfig.IsInReleaseConfiguration();
-    Printer.DebugMsg("Started with arg --bench and IsRelease: " + isRelease);
-    if (!isRelease)
+    if (!Config.IsInRelease)
     {
         Printer.DebugMsg("!!! Benchmarks should only be run in release mode !!!");
         // return;
@@ -55,20 +73,7 @@ if (args.Contains("--bench"))
     return;
 }
 
-var explicitDaysRequested = args
-    .Where(arg => arg.All(char.IsDigit))
-    .Select(int.Parse)
-    .Where(day => day.Between(1, Config.MaxChallengeDays, true))
-    .ToList();
-
-var longestMessage =
-    $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |  ExplicitDays: [{string.Join(",", explicitDaysRequested)}]";
-
-Printer.ConsoleWidth = longestMessage.Length;
-if (Config.TryAndUseConsoleWidth) Printer.TryUpdateConsoleWidth();
-
-Printer.PrintGreeting();
-Printer.DebugMsg(longestMessage);
+// Run the actual program
 Printer.DebugMsg($"Found {Puzzles.ImplementedPuzzles.Count} implementations");
 Printer.PrintSeparator(onlyDuringDebug: true);
 Printer.PrintResultHeader();
