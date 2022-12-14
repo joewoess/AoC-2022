@@ -6,6 +6,7 @@
 # Ignore all files in the dump folder
 dump/
 !dump/aoc.sln
+**/.idea/**/.gitignore
 
 ### Csharp ###
 ## Ignore Visual Studio temporary files, build results, and
