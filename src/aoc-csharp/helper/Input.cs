@@ -2,8 +2,10 @@ namespace aoc_csharp.helper;
 
 public static class Input
 {
-    public static string DataDirectory => Config.IsDemo ? Config.InputPathDemo : Config.InputPathReal;
-    public static string DataFilePath(IPuzzle puzzle) => Path.Combine(DataDirectory, $"{puzzle.TypeName.ToLower()}.txt");
+    private static string DataDirectory => Config.IsDemo ? Config.InputPathDemo : Config.InputPathReal;
+    
+    private static string DataFileName(IPuzzle puzzle) => $"{puzzle.TypeName.ToLower()}.txt";
+    private static string DataFilePath(IPuzzle puzzle) => Path.Combine(DataDirectory, DataFileName(puzzle));
 
     public static SuccessResult<string> GetInput(this IPuzzle impl)
     {

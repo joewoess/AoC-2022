@@ -5,7 +5,7 @@ public static class Config
 
     public const string InputPathReal = "../../data/real/";
     public const string InputPathDemo = "../../data/demo/";
-    public const string OutputHeaderPath = "../../HEADER";
+    private const string OutputHeaderPath = "../../HEADER";
 
     // Settings
 

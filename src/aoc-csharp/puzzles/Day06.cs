@@ -4,7 +4,7 @@ public sealed class Day06 : PuzzleBaseText
 {
     public override string? FirstPuzzle()
     {
-        var uniqueSequenceLength = 4;
+        const int uniqueSequenceLength = 4;
         var pos = uniqueSequenceLength;
         for (; pos < Data.Length; pos++)
         {
@@ -21,7 +21,7 @@ public sealed class Day06 : PuzzleBaseText
 
     public override string? SecondPuzzle()
     {
-        var uniqueSequenceLength = 14;
+        const int uniqueSequenceLength = 14;
         var pos = uniqueSequenceLength;
         for (; pos < Data.Length; pos++)
         {

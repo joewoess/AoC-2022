@@ -1,27 +1,33 @@
 namespace aoc_csharp.puzzles;
+
 using System.Numerics;
 
 public sealed class Day07 : PuzzleBaseLines
 {
+    private const long MaxFilterSize = 100_000L;
+    private const long TotalSize = 70_000_000L;
+    private const long MinFreeSizeRequired = 30_000_000L;
+    
+    private const string FolderPrefix = "+";
+    private const string ShellPrefix = "$";
+
     public override string? FirstPuzzle()
     {
-        var rootDir = buildFileTree(Data);
+        var rootDir = BuildFileTree(Data);
         DebugPrintTree(rootDir);
 
-        var sub100kFiles = ListDirs(rootDir, new List<Dir>(), maxSizeFilter: 100_000L);
-        Printer.DebugMsg($"Found {sub100kFiles.Count} dirs with size < 100k.");
-        var totalSizeOfSub100kFiles = sub100kFiles.Select(b => b.Size).Aggregate(BigInteger.Add);
-        return totalSizeOfSub100kFiles.ToString();
+        var subFilterFiles = ListDirs(rootDir, new List<Dir>(), maxSizeFilter: MaxFilterSize);
+        Printer.DebugMsg($"Found {subFilterFiles.Count} dirs with size < 100k.");
+        var sumOfSubFilterFiles = subFilterFiles.Select(b => b.Size).Aggregate(BigInteger.Add);
+        return sumOfSubFilterFiles.ToString();
     }
 
     public override string? SecondPuzzle()
     {
-        var rootDir = buildFileTree(Data);
+        var rootDir = BuildFileTree(Data);
 
         var currentTotal = rootDir.Size;
-        var totalSize = 70_000_000L;
-        var minSizeRequired = 30_000_000L;
-        var minDirSizeToDelete = minSizeRequired - (totalSize - currentTotal);
+        var minDirSizeToDelete = MinFreeSizeRequired - (TotalSize - currentTotal);
         Printer.DebugMsg($"Current total size is {currentTotal}, min dir size to delete is {minDirSizeToDelete}.");
 
         var dirs = ListDirs(rootDir, new List<Dir>(), minSizeFilter: minDirSizeToDelete);
@@ -34,10 +40,12 @@ public sealed class Day07 : PuzzleBaseLines
     {
         public virtual BigInteger Size => 0;
     }
+
     public sealed record class Dir(string Name, Dir? Parent, List<Entry> SubEntries) : Entry(Name, Parent)
     {
         public override BigInteger Size => SubEntries.Select(entry => entry.Size).Aggregate(BigInteger.Add);
     }
+
     public sealed record class FileEntry(string Name, Dir? Parent, BigInteger FileSize) : Entry(Name, Parent)
     {
         public override BigInteger Size => FileSize;
@@ -57,10 +65,11 @@ public sealed class Day07 : PuzzleBaseLines
 
             ListDirs(dir, dirs, minSizeFilter, maxSizeFilter);
         }
+
         return dirs;
     }
 
-    private static Dir buildFileTree(string[] input)
+    private static Dir BuildFileTree(string[] input)
     {
         Dir rootDir = new Dir("/", null, new());
         Dir currentDir = rootDir;
@@ -68,23 +77,24 @@ public sealed class Day07 : PuzzleBaseLines
 
         foreach (var line in input)
         {
-            if (line.StartsWith("$") && currentDirBuilder.Count > 0)
+            if (line.StartsWith(ShellPrefix) && currentDirBuilder.Count > 0)
             {
                 currentDir.SubEntries.AddRange(currentDirBuilder);
                 currentDirBuilder.Clear();
             }
+
             switch (line.Split(" "))
             {
-                case ["$", "ls"]:
+                case [ShellPrefix, "ls"]:
                     Printer.DebugMsg($"Following are the entries for {currentDir.Name}.");
                     break;
-                case ["$", "cd", "/"]:
+                case [ShellPrefix, "cd", "/"]:
                     currentDir = rootDir;
                     break;
-                case ["$", "cd", ".."]:
+                case [ShellPrefix, "cd", ".."]:
                     currentDir = currentDir.Parent ?? rootDir;
                     break;
-                case ["$", "cd", var name]:
+                case [ShellPrefix, "cd", var name]:
                     currentDir = currentDir.SubEntries.OfType<Dir>().FirstOrDefault(d => d.Name == name) ?? throw new Exception($"Unknown dir {name}");
                     break;
                 default:
@@ -99,6 +109,7 @@ public sealed class Day07 : PuzzleBaseLines
                             currentDirBuilder.Add(new FileEntry(name, currentDir, BigInteger.Parse(size)));
                             break;
                     }
+
                     break;
             }
         }
@@ -108,13 +119,14 @@ public sealed class Day07 : PuzzleBaseLines
             currentDir.SubEntries.AddRange(currentDirBuilder);
             currentDirBuilder.Clear();
         }
+
         return rootDir;
     }
 
     /** Prints a tree of entries with indentation */
-    public static void DebugPrintTree(Entry currentEntry, int level = 0)
+    public static void DebugPrintTree(Entry currentEntry, int level = 0, char indentChar = ' ', int indentMultiplier = 2)
     {
-        Printer.DebugMsg($"{new string(' ', level * 2)}+ {currentEntry.Name} ({currentEntry.Size})");
+        Printer.DebugMsg($"{new string(indentChar, level * indentMultiplier)}{FolderPrefix} {currentEntry.Name} ({currentEntry.Size})");
         if (currentEntry is Dir dir)
         {
             foreach (var sub in dir.SubEntries)

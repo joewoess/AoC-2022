@@ -8,7 +8,7 @@ public static class Puzzles
     public static List<IPuzzle> ImplementedPuzzles { get; } =
         GetImplementedTypesFromNamespace()
             .Select(GetPuzzle)
-            .Where(puzzle => puzzle != null)
+            .Where(Util.IsNotNull)
             .Cast<IPuzzle>()
             .ToList();
 

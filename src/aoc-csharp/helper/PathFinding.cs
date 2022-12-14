@@ -2,21 +2,8 @@ namespace aoc_csharp.helper;
 
 public static class PathFinding
 {
-    /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
-    public static IEnumerable<Point> WalkNoObstacles(Point from, Point to, bool allowDiagonal = true, bool preferDiagonal = true, bool preferHorizontal = true, bool includeStart = false)
-    {
-        var currentPos = from;
-        if (includeStart)
-            yield return currentPos;
-        while (currentPos != to)
-        {
-            currentPos = currentPos.StepTowards(to, allowDiagonal, preferDiagonal, preferHorizontal);
-            yield return currentPos;
-        }
-    }
-
-    public static List<TGrid> MapNeighbors<TGrid>(this Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter, int maxHeight, int maxWidth,
-        bool includeDiagonals = false)
+    public static List<TGrid> MapNeighbors<TGrid>(this Point currentPos, Func<Point, Point, TGrid> mapper, Func<Point, Point, bool> filter,
+        int maxHeight, int maxWidth, bool includeDiagonals = false)
     {
         return currentPos
             .GetNeighborsFiltered(filter, maxHeight, maxWidth, includeDiagonals)

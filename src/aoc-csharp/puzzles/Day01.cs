@@ -20,7 +20,6 @@ public sealed class Day01 : PuzzleBaseLines
         }
         numbers.Add(sum);
 
-
         var maxCalories = numbers.Max();
         Printer.DebugMsg($"Elf with max calories had {maxCalories} total calories.");
         return maxCalories.ToString();

@@ -11,19 +11,12 @@ public sealed class Day05 : PuzzleBaseLines
         PopulateWithInitial(stacks, initialStacks);
         Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
 
-        var moves = Data
-            .Skip(initialStacks.Count + 2)
-            .Select(line => line.Split(" "))
-            .Select(parts => (amount: int.Parse(parts[1]), from: int.Parse(parts[3]) - 1, to: int.Parse(parts[5]) - 1))
-            .ToList();
+        var moves = ParseMoves(initialStacks.Count);
 
-        foreach (var item in moves)
+        foreach (var (amount, from, to) in moves)
         {
-            Printer.DebugMsg($"Move: {item}");
-            for (int i = 0; i < item.amount; i++)
-            {
-                stacks[item.to].Push(stacks[item.from].Pop());
-            }
+            Printer.DebugMsg($"Move: ({amount} from {from} to {to})");
+            amount.DoTimes(() => stacks[to].Push(stacks[from].Pop()));
 
             Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
         }
@@ -42,26 +35,15 @@ public sealed class Day05 : PuzzleBaseLines
         PopulateWithInitial(stacks, initialStacks);
         Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
 
-        var moves = Data
-            .Skip(initialStacks.Count + 2)
-            .Select(line => line.Split(" "))
-            .Select(parts => (amount: int.Parse(parts[1]), from: int.Parse(parts[3]) - 1, to: int.Parse(parts[5]) - 1))
-            .ToList();
+        var moves = ParseMoves(initialStacks.Count);
 
         var exchangeStack = new Stack<char>();
-
-        foreach (var item in moves)
+        foreach (var (amount, from, to) in moves)
         {
-            Printer.DebugMsg($"Move: {item}");
-            for (int i = 0; i < item.amount; i++)
-            {
-                exchangeStack.Push(stacks[item.from].Pop());
-            }
-
-            for (int i = 0; i < item.amount; i++)
-            {
-                stacks[item.to].Push(exchangeStack.Pop());
-            }
+            Printer.DebugMsg($"Move: ({amount} from {from} to {to})");
+            
+            amount.DoTimes(() => exchangeStack.Push(stacks[from].Pop()));
+            amount.DoTimes(() => stacks[to].Push(exchangeStack.Pop()));
 
             Printer.DebugMsg($"Top crates are: {string.Join("", stacks.Select(s => s.LastOrDefault()))}");
         }
@@ -71,20 +53,11 @@ public sealed class Day05 : PuzzleBaseLines
         return result;
     }
 
-    private static (List<string>, int) ReadInitialLoad(string[] input)
+    private static (List<string> Initial, int Amount) ReadInitialLoad(string[] data)
     {
-        var initialStacks = new List<string>();
-        foreach (var line in input)
-        {
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                break;
-            }
+        var initialStacks = data.TakeWhile(Util.HasContent).ToList();
 
-            initialStacks.Add(line);
-        }
-
-        var amountOfStacks = initialStacks.Last().Split(" ").Count(split => !string.IsNullOrWhiteSpace(split));
+        var amountOfStacks = initialStacks.Last().Split(" ").Count(Util.HasContent);
         initialStacks.Remove(initialStacks.Last());
 
         Printer.DebugMsg($"There are {amountOfStacks} Stacks with initial load of:\n{string.Join("\n", initialStacks)}");
@@ -95,17 +68,26 @@ public sealed class Day05 : PuzzleBaseLines
 
     private static void PopulateWithInitial(List<Stack<char>> stacks, List<string> initialInput)
     {
-        var at = (int i) => i * 4 + 1;
+        int IdxOf(int i) => i * 4 + 1;
         foreach (var line in initialInput)
         {
-            for (var j = 0; at(j) < line.Length; j++)
+            for (var num = 0; IdxOf(num) < line.Length; num++)
             {
-                Printer.DebugMsg($"Adding {line[at(j)]} to stack {j}");
-                if (!char.IsWhiteSpace(line[at(j)]))
+                Printer.DebugMsg($"Adding {line[IdxOf(num)]} to stack {num}");
+                if (!char.IsWhiteSpace(line[IdxOf(num)]))
                 {
-                    stacks[j].Push(line[at(j)]);
+                    stacks[num].Push(line[IdxOf(num)]);
                 }
             }
         }
+    }
+
+    private List<(int Amount, int From, int To)> ParseMoves(int numInitialStacks)
+    {
+        return Data
+            .Skip(numInitialStacks + 2)
+            .Select(line => line.Split(" "))
+            .Select(parts => (int.Parse(parts[1]), int.Parse(parts[3]) - 1, int.Parse(parts[5]) - 1))
+            .ToList();
     }
 }

@@ -5,11 +5,7 @@ public sealed class Day04 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var score = 0;
-        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = Data
-            .Select(line => line.SplitToPair())
-            .Select(pairs => (elfA: pairs.First.SplitToPair("-"), elfB: pairs.Second.SplitToPair("-")))
-            .Select(pairs => (pairs.elfA.ApplyToPair(int.Parse), pairs.elfB.ApplyToPair(int.Parse)))
-            .ToList();
+        var assignments = ParseCommonInput(Data);
 
         foreach (var (elfA, elfB) in assignments)
         {
@@ -31,11 +27,7 @@ public sealed class Day04 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var score = 0;
-        List<((int from, int to) ElfA, (int from, int to) ElfB)> assignments = Data
-            .Select(line => line.SplitToPair())
-            .Select(pairs => (elfA: pairs.First.SplitToPair("-"), elfB: pairs.Second.SplitToPair("-")))
-            .Select(pairs => (pairs.elfA.ApplyToPair(int.Parse), pairs.elfB.ApplyToPair(int.Parse)))
-            .ToList();
+        var assignments = ParseCommonInput(Data);
 
         foreach (var (elfA, elfB) in assignments)
         {
@@ -45,12 +37,21 @@ public sealed class Day04 : PuzzleBaseLines
 
             if (elfARange.Any(elfBRange.Contains) || elfBRange.Any(elfARange.Contains))
             {
-                Printer.DebugMsg($"One elf is a subset of the other");
+                Printer.DebugMsg($"One elf is at least a partial subset of the other");
                 score++;
             }
         }
 
-        Printer.DebugMsg($"Times one elf was fully unneeded was {score}.");
+        Printer.DebugMsg($"Times assignments overlapped {score}.");
         return score.ToString();
+    }
+
+    private static List<((int from, int to) ElfA, (int from, int to) ElfB)> ParseCommonInput(string[] data)
+    {
+        return data
+            .Select(line => line.ToStrPair())
+            .Select(ass => (elfA: ass.First.ToStrPair("-"), elfB: ass.Second.ToStrPair("-")))
+            .Select(elves => (elves.elfA.MapPairWith(int.Parse), elves.elfB.MapPairWith(int.Parse)))
+            .ToList();
     }
 }

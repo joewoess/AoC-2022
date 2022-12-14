@@ -2,7 +2,7 @@ namespace aoc_csharp.puzzles;
 
 public sealed class Day14 : PuzzleBaseLines
 {
-    private Point sandComesInHere = new Point(500, 0);
+    private static readonly Point SandTrickleStart = new(500, 0);
     private const char SandStart = '+';
     private const char Sand = 'o';
     private const char Rock = '#';
@@ -13,14 +13,14 @@ public sealed class Day14 : PuzzleBaseLines
         var rockData = ExtractPoints(Data);
         Printer.DebugMsg($"Found {rockData.Count} lines of rock data");
 
-        var caveDict = initCaveDictionary(rockData);
+        var caveDict = InitCaveDictionary(rockData);
         var abyssLevel = caveDict.Keys.Max(p => p.Y);
 
         Printer.DebugMsg($"Endless abyss below {abyssLevel}");
-        Printer.DebugMsg($"Cave looks like this without sand:{Environment.NewLine}{Grids.GridAsPrintable(caveDict.AsCharGrid())}");
+        Printer.DebugMsg($"Cave looks like this without sand:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
 
-        
-        int unitsOfSand = TrickleSand(caveDict, abyssLevel, false);
+
+        var unitsOfSand = TrickleSand(caveDict, abyssLevel, false);
 
         // // also print overflow
         // var newSandUnit = sandComesInHere;
@@ -31,7 +31,7 @@ public sealed class Day14 : PuzzleBaseLines
         //     caveDict[newSandUnit] = Overflow;
         // }
 
-        Printer.DebugMsg($"Cave looks like this with all the sand:{Environment.NewLine}{Grids.GridAsPrintable(caveDict.AsCharGrid())}");
+        Printer.DebugMsg($"Cave looks like this with all the sand:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
         Printer.DebugMsg($"There was {unitsOfSand} units of sand that landed in the cave");
         return unitsOfSand.ToString();
     }
@@ -41,43 +41,43 @@ public sealed class Day14 : PuzzleBaseLines
         var rockData = ExtractPoints(Data);
         Printer.DebugMsg($"Found {rockData.Count} lines of rock data");
 
-        var caveDict = initCaveDictionary(rockData);
+        var caveDict = InitCaveDictionary(rockData);
         var floorLevel = caveDict.Keys.Max(p => p.Y) + 2;
 
         Printer.DebugMsg($"There is bedrock at {floorLevel}");
-        Printer.DebugMsg($"Cave looks like this without sand:{Environment.NewLine}{Grids.GridAsPrintable(caveDict.AsCharGrid())}");
-        
-        int unitsOfSand = TrickleSand(caveDict, floorLevel, true);
+        Printer.DebugMsg($"Cave looks like this without sand:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
 
-        Printer.DebugMsg($"Cave looks like this with all the sand:{Environment.NewLine}{Grids.GridAsPrintable(caveDict.AsCharGrid())}");
+        var unitsOfSand = TrickleSand(caveDict, floorLevel, true);
+
+        Printer.DebugMsg($"Cave looks like this with all the sand:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
         Printer.DebugMsg($"There was {unitsOfSand} units of sand that landed in the cave");
         return unitsOfSand.ToString();
     }
 
     // Input parsing
-    private List<List<Point>> ExtractPoints(string[] Data)
+    private static List<List<Point>> ExtractPoints(string[] data)
     {
-        return Data
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Select(line => line.Split(" -> ")
-                                        .Select(line => line.SplitToPair())
-                                        .Select(pair => pair.ApplyToPair(int.Parse))
-                                        .Select(intPair => new Point(intPair.First, intPair.Second))
-                                        .ToList())
-                    .ToList();
+        return data
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(line => line.Split(" -> ")
+                .Select(coord => coord.SplitAndMapToPair(int.Parse))
+                .Select(intPair => new Point(intPair.First, intPair.Second))
+                .ToList())
+            .ToList();
     }
-    private Dictionary<Point, char> initCaveDictionary(List<List<Point>> rockData)
+
+    private static Dictionary<Point, char> InitCaveDictionary(List<List<Point>> rockData)
     {
         var caveDict = new Dictionary<Point, char>
         {
-            [sandComesInHere] = SandStart
+            [SandTrickleStart] = SandStart
         };
 
         foreach (var rockLine in rockData)
         {
             foreach (var (from, to) in rockLine.PairWithNext())
             {
-                PathFinding.WalkNoObstacles(from, to, allowDiagonal: false, includeStart: true)
+                from.WalkDirectlyTowards(to, allowDiagonal: false, includeStart: true)
                     .ToList()
                     .ForEach(step => caveDict[step] = Rock);
             }
@@ -87,10 +87,10 @@ public sealed class Day14 : PuzzleBaseLines
     }
 
     // Sand simulation
-    private int TrickleSand(Dictionary<Point, char> caveDict, int floorLevel, bool hasBedrock)
+    private static int TrickleSand(Dictionary<Point, char> caveDict, int floorLevel, bool hasBedrock)
     {
         var unitsOfSand = 0;
-        var newSandUnit = sandComesInHere;
+        var newSandUnit = SandTrickleStart;
 
         while (newSandUnit.Y < floorLevel)
         {
@@ -98,10 +98,10 @@ public sealed class Day14 : PuzzleBaseLines
             if (newSandUnit == nextStep)
             {
                 caveDict[newSandUnit] = Sand;
-                newSandUnit = sandComesInHere;
+                newSandUnit = SandTrickleStart;
                 unitsOfSand++;
 
-                if (nextStep == sandComesInHere)
+                if (nextStep == SandTrickleStart)
                 {
                     break;
                 }
@@ -114,7 +114,8 @@ public sealed class Day14 : PuzzleBaseLines
 
         return unitsOfSand;
     }
-    private Point FallOneStep(Dictionary<Point, char> map, Point point, int? bedrock = null)
+
+    private static Point FallOneStep(Dictionary<Point, char> map, Point point, int? bedrock = null)
     {
         var down = point.StepInDirection(Direction.Down);
         var downLeft = point.StepInDirection(Direction.DownLeft);
@@ -123,9 +124,9 @@ public sealed class Day14 : PuzzleBaseLines
         // add bedrock if we're at the bottom
         if (bedrock.HasValue && bedrock == down.Y)
         {
-            map[down] = '#';
-            map[downLeft] = '#';
-            map[downRight] = '#';
+            map[down] = Rock;
+            map[downLeft] = Rock;
+            map[downRight] = Rock;
         }
 
         if (!map.ContainsKey(down)) return down;

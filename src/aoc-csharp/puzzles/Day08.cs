@@ -5,21 +5,24 @@ public sealed class Day08 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var grid = Data
-            .Select(line => line.Select(c => int.Parse(c.ToString())).ToArray())
+            .Select(line => line.Select(c => (int)c).ToArray()).ToArray()
             .ToArray();
 
-        Printer.DebugMsg($"Grid is {grid.Length}x{grid[0].Length} with values:\n{Grids.GridAsPrintable(grid)} ");
+        var height = grid.Length;
+        var width = grid[0].Length;
 
-        var lastTop = new int[grid[0].Length];
-        var lastBottom = new int[grid[0].Length];
+        Printer.DebugMsg($"Grid is {height}x{width} with values:\n{grid.AsPrintable()} ");
+
+        var lastTop = new int[width];
+        var lastBottom = new int[width];
         Array.Fill(lastTop, -1);
         Array.Fill(lastBottom, -1);
-        var visibleFromOutside = new bool[grid.Length, grid[0].Length].ToJaggedArray();
-        for (int y = 0; y < grid.Length; y++)
+        var visibleFromOutside = new bool[height, width].AsJaggedArray();
+        for (int y = 0; y < height; y++)
         {
             int lastLeft = -1;
             int lastRight = -1;
-            for (int x = 0; x < grid[0].Length; x++)
+            for (int x = 0; x < width; x++)
             {
                 // vertical
                 if (grid[y][x] > lastTop[x])
@@ -51,7 +54,7 @@ public sealed class Day08 : PuzzleBaseLines
             }
         }
 
-        Printer.DebugMsg($"Visible trees are:\n{Grids.GridAsPrintable(visibleFromOutside, (bool b) => (b ? "1" : "0"))} ");
+        Printer.DebugMsg($"Visible trees are:\n{visibleFromOutside.AsPrintable((b) => (b ? "1" : "0"))} ");
 
         var visibleTrees = visibleFromOutside.SelectMany(row => row).Count(v => v);
         Printer.DebugMsg($"Found {visibleTrees} trees visible from outside.");
@@ -62,18 +65,22 @@ public sealed class Day08 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var grid = Data
-            .Select(line => line.Select(c => int.Parse($"{c}")).ToArray())
+            .Select(line => line.Select(c => (int)c).ToArray())
             .ToArray();
-        Printer.DebugMsg($"Grid is {grid.Length}x{grid[0].Length} with values:\n{Grids.GridAsPrintable(grid)} ");
+        
+        var height = grid.Length;
+        var width = grid[0].Length;
+        
+        Printer.DebugMsg($"Grid is {height}x{width} with values:\n{grid.AsPrintable()} ");
 
         var maxScore = 0;
 
         // skip the edges, because there will always be a 0 score there
-        for (int y = 1; y < grid.Length - 1; y++)
+        for (int y = 1; y < height - 1; y++)
         {
-            for (int x = 1; x < grid[y].Length - 1; x++)
+            for (int x = 1; x < width - 1; x++)
             {
-                var score = getScoreForTree(grid, y, x);
+                var score = ScoreForTree(grid, y, x);
                 if (score > maxScore)
                 {
                     maxScore = score;
@@ -84,7 +91,7 @@ public sealed class Day08 : PuzzleBaseLines
         return maxScore.ToString();
     }
 
-    private static int getScoreForTree(int[][] grid, int y, int x)
+    private static int ScoreForTree(int[][] grid, int y, int x)
     {
         var leftScore = 0;
         var rightScore = 0;

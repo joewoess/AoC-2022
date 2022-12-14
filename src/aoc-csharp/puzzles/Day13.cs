@@ -5,7 +5,7 @@ public sealed class Day13 : PuzzleBaseLines
     public override string? FirstPuzzle()
     {
         var listPairs = Data
-            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Where(Util.HasContent)
             .Select(ParseListFromLine)
             .Chunk(2)
             .Select(chunk => (Left: chunk[0], Right: chunk[1]))
@@ -29,7 +29,7 @@ public sealed class Day13 : PuzzleBaseLines
     public override string? SecondPuzzle()
     {
         var listPairs = Data
-            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Where(Util.HasContent)
             .Select(ParseListFromLine)
             .Select(list => list)
             .ToList();
@@ -123,7 +123,7 @@ public sealed class Day13 : PuzzleBaseLines
                         // Push values before the list
                         var values = line.Substring(startIndex, index - startIndex)
                             .Split(',')
-                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Where(Util.HasContent)
                             .Select(int.Parse)
                             .Select(i => new ListOrValue(i, null));
                         values.ToList().ForEach(result.Add);
@@ -141,7 +141,7 @@ public sealed class Day13 : PuzzleBaseLines
                         // Push values before the list
                         var values = line.Substring(startIndex, index - startIndex)
                             .Split(',')
-                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Where(Util.HasContent)
                             .Select(int.Parse)
                             .Select(i => new ListOrValue(i, null));
                         values.ToList().ForEach(result.Add);

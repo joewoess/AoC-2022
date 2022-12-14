@@ -74,15 +74,28 @@ public static class PointerExtensions
         };
     }
 
-    private static (int xStep, int yStep) CalculateStepTowards(this Point currentPoint, Point target)
+    private static Point CalculateStepTowards(this Point currentPoint, Point target)
     {
         var (xDiff, yDiff) = (target.X - currentPoint.X, target.Y - currentPoint.Y);
-        return (Math.Clamp(xDiff, -1, 1), Math.Clamp(yDiff, -1, 1));
+        return new Point(Math.Clamp(xDiff, -1, 1), Math.Clamp(yDiff, -1, 1));
+    }
+
+    /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
+    public static IEnumerable<Point> WalkDirectlyTowards(this Point from, Point to, bool allowDiagonal = true, bool preferDiagonal = true,
+        bool preferHorizontal = true, bool includeStart = false)
+    {
+        var currentPos = from;
+        if (includeStart) yield return currentPos;
+        while (currentPos != to)
+        {
+            currentPos = currentPos.StepTowards(to, allowDiagonal, preferDiagonal, preferHorizontal);
+            yield return currentPos;
+        }
     }
 
     // comparisons
 
-    public static bool IsWithinReach(this Point currentPoint, Point target) => Math.Abs(currentPoint.X - target.X) <= 1 && Math.Abs(currentPoint.Y - target.Y) <= 1;
+    public static bool IsWithinReach(this Point currentPoint, Point target) => currentPoint.ChebyshevDistance(target) <= 1;
 
     public static Direction GetDirectionTowards(this Point currentPoint, Point target)
     {
@@ -98,6 +111,22 @@ public static class PointerExtensions
             (-1, 1) => Direction.DownLeft,
             (-1, -1) => Direction.UpLeft,
             _ => throw new Exception($"Unknown direction towards {target} from {currentPoint}")
+        };
+    }
+    
+    public static Direction ParseDirection(this string direction)
+    {
+        return direction switch
+        {
+            "U" or "^" => Direction.Up,
+            "D" or "v" => Direction.Down,
+            "L" or "<" => Direction.Left,
+            "R" or ">" => Direction.Right,
+            "UL" or "↖" => Direction.UpLeft,
+            "UR" or "↗" => Direction.UpRight,
+            "DL" or "↙" => Direction.DownLeft,
+            "DR" or "↘" => Direction.DownRight,
+            _ => throw new Exception($"Unknown direction {direction}")
         };
     }
 

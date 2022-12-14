@@ -10,29 +10,26 @@ public sealed class Day02 : PuzzleBaseLines
     {
         // X = Rock, Y = Paper, Z = Scissors
         var score = 0;
-        List<(string Elf, string You)> duels = Data
-            .Select(x => x.Split(" ").ToArray())
-            .Select(x => (x[0], x[1]))
-            .ToList();
-        foreach (var duel in duels)
+        var duels = ParseCommonInput(Data);
+        foreach (var (elf, you) in duels)
         {
-            var duelScore = duel.You switch
+            var duelScore = you switch
             {
-                "X" => duel.Elf switch
+                "X" => elf switch
                 {
                     "A" => 3,
                     "B" => 0,
                     "C" => 6,
                     _ => -1
                 } + 1,
-                "Y" => duel.Elf switch
+                "Y" => elf switch
                 {
                     "A" => 6,
                     "B" => 3,
                     "C" => 0,
                     _ => -2
                 } + 2,
-                "Z" => duel.Elf switch
+                "Z" => elf switch
                 {
                     "A" => 0,
                     "B" => 6,
@@ -43,11 +40,11 @@ public sealed class Day02 : PuzzleBaseLines
             };
             if (duelScore == 0)
             {
-                Printer.DebugMsg($"Invalid input. Elf chose {duel.Elf} and you chose {duel.You}");
+                Printer.DebugMsg($"Invalid input. Elf chose {elf} and you chose {you}");
                 return null;
             }
 
-            Printer.DebugMsg($"Elf: {duel.Elf} vs You: {duel.You} results in {duelScore} points.");
+            Printer.DebugMsg($"Elf: {elf} vs You: {you} results in {duelScore} points.");
             score += duelScore;
         }
 
@@ -59,29 +56,26 @@ public sealed class Day02 : PuzzleBaseLines
     {
         // X = Loss, Y = Draw, Z = Win
         var score = 0;
-        List<(string Elf, string Outcome)> duels = Data
-            .Select(x => x.Split(" ").ToArray())
-            .Select(x => (x[0], x[1]))
-            .ToList();
-        foreach (var duel in duels)
+        var duels = ParseCommonInput(Data);
+        foreach (var (elf, outcome) in duels)
         {
-            var duelScore = duel.Outcome switch
+            var duelScore = outcome switch
             {
-                "X" => duel.Elf switch
+                "X" => elf switch
                 {
                     "A" => 3,
                     "B" => 1,
                     "C" => 2,
                     _ => 0
                 } + 0,
-                "Y" => duel.Elf switch
+                "Y" => elf switch
                 {
                     "A" => 1,
                     "B" => 2,
                     "C" => 3,
                     _ => -3
                 } + 3,
-                "Z" => duel.Elf switch
+                "Z" => elf switch
                 {
                     "A" => 2,
                     "B" => 3,
@@ -92,15 +86,22 @@ public sealed class Day02 : PuzzleBaseLines
             };
             if (duelScore == 0)
             {
-                Printer.DebugMsg($"Invalid input. Elf chose {duel.Elf} and you wanted {duel.Outcome}");
+                Printer.DebugMsg($"Invalid input. Elf chose {elf} and you wanted {outcome}");
                 return null;
             }
 
-            Printer.DebugMsg($"Elf: {duel.Elf} with Outcome: {duel.Outcome} results in {duelScore} points.");
+            Printer.DebugMsg($"Elf: {elf} with Outcome: {outcome} results in {duelScore} points.");
             score += duelScore;
         }
 
         Printer.DebugMsg($"Your total score is {score}.");
         return score.ToString();
+    }
+
+    private static List<(string Elf, string Desired)> ParseCommonInput(IEnumerable<string> data)
+    {
+        return data
+            .Select(x => x.ToStrPair(" "))
+            .ToList();
     }
 }

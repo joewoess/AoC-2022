@@ -74,8 +74,8 @@ public sealed class Day10 : PuzzleBaseLines
 
         }
 
-        var crtDisplay = Grids.GridAsPrintable(Grids.PointDictToGrid(display, val => val));
-        Printer.DebugMsg($"CRT display shows:\n{crtDisplay}.");
+        var crtDisplay = display.AsCharGrid();
+        Printer.DebugMsg($"CRT display shows:\n{crtDisplay.AsPrintable()}.");
 
         return signalSum.ToString();
     }

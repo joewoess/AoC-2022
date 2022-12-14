@@ -4,7 +4,6 @@ namespace aoc_csharp.helper;
 public interface IPuzzle
 {
     string TypeName => GetType().Name;
-    string DataFileName => $"{TypeName.ToLower()}.txt";
 
     bool WasInputSuccess();
 
@@ -57,4 +56,4 @@ public sealed class NoImplPuzzle : IPuzzle
 }
 
 /** Helper struct for returning a success flag and a result */
-public record struct SuccessResult<T>(bool Success, T? Result);
+public readonly record struct SuccessResult<T>(bool Success, T? Result);

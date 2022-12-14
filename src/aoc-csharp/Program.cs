@@ -10,7 +10,7 @@ Config.ShowSecond = !args.Contains("--first") || args.Contains("--second");
 var explicitDaysRequested = args
     .Where(arg => arg.All(char.IsDigit))
     .Select(int.Parse)
-    .Where(day => day.BetweenIncl(1, Config.MaxChallengeDays))
+    .Where(day => day.Between(1, Config.MaxChallengeDays, true))
     .ToList();
 
 var longestMessage =

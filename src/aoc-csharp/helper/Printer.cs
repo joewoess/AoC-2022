@@ -4,7 +4,7 @@ namespace aoc_csharp.helper;
 
 public static class Printer
 {
-    private static (string Message, int Padding)[] ColumnHeaders { get; } =
+    private static IEnumerable<(string Message, int Padding)> ColumnHeaders { get; } = new[]
     {
         ("Day", Config.InfoColumnPadding),
         ("Type", Config.InfoColumnPadding),

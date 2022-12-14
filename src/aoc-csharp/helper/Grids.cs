@@ -1,9 +1,11 @@
 using System.Text;
+
 namespace aoc_csharp.helper;
+
 public static class Grids
 {
     /** Maps a generic dictionary to a multidimensional grid with a given mapper function */
-    public static TGrid[,] PointDictToGrid<TGrid, TMap>(Dictionary<Point, TMap> map, Func<TMap?, TGrid> mapper)
+    public static TGrid[,] AsGrid<TGrid, TMap>(this Dictionary<Point, TMap> map, Func<TMap?, TGrid> mapper)
     {
         var minX = map.Keys.Min(p => p.X);
         var maxX = map.Keys.Max(p => p.X);
@@ -24,15 +26,18 @@ public static class Grids
         return grid;
     }
 
+    /** Converts a generic point dictionary to a printable string via PointDictToGrid */
+    public static string AsPrintable<TGrid, TMap>(this Dictionary<Point, TMap> map, Func<TMap?, TGrid> mapper) => AsPrintable(AsGrid(map, mapper));
+
     /** Converts a generic multidimensional array to a printable string */
-    public static string GridAsPrintable<TGrid>(TGrid[,] grid, Func<TGrid, string>? mapper = null, string? separator = null, int? padLength = null,
+    public static string AsPrintable<TGrid>(this TGrid[,] grid, Func<TGrid, string>? mapper = null, string? separator = null, int? padLength = null,
         string defaultWithoutMapper = "", string? lineSeparator = "\n")
     {
-        return GridAsPrintable(grid.ToJaggedArray(), mapper, separator, padLength, defaultWithoutMapper, lineSeparator);
+        return AsPrintable(grid.AsJaggedArray(), mapper, separator, padLength, defaultWithoutMapper, lineSeparator);
     }
 
     /** Converts a generic jagged array to a printable string */
-    public static string GridAsPrintable<TGrid>(TGrid[][] grid, Func<TGrid, string>? mapper = null, string? separator = null, int? padLength = null,
+    public static string AsPrintable<TGrid>(this TGrid[][] grid, Func<TGrid, string>? mapper = null, string? separator = null, int? padLength = null,
         string defaultWithoutMapper = "", string? lineSeparator = "\n")
     {
         var result = new StringBuilder();
@@ -62,7 +67,7 @@ public static class Grids
     }
 
     /** Converts a multidimensional array to a jagged array */
-    public static T[][] ToJaggedArray<T>(this T[,] twoDimensionalArray)
+    public static T[][] AsJaggedArray<T>(this T[,] twoDimensionalArray)
     {
         var rowsFirstIndex = twoDimensionalArray.GetLowerBound(0);
         var rowsLastIndex = twoDimensionalArray.GetUpperBound(0);
@@ -86,9 +91,6 @@ public static class Grids
         return jaggedArray;
     }
 
-    /** Non-generic version of PointDictToGrid for getting a grid with empty spaces as emptySpace */ 
-    public static char[,] AsCharGrid(this Dictionary<Point, char> map, char emptySpace = '.')
-    {
-        return PointDictToGrid(map, c => c == 0 ? emptySpace : c);
-    }
+    /** Non-generic version of PointDictToGrid for getting a grid with empty spaces as emptySpace */
+    public static char[,] AsCharGrid(this Dictionary<Point, char> map, char emptySpace = '.') => AsGrid(map, c => c == 0 ? emptySpace : c);
 }

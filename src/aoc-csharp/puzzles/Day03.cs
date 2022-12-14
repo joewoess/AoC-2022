@@ -22,18 +22,26 @@ public sealed class Day03 : PuzzleBaseLines
                 Printer.DebugMsg($"Too many common characters, cancelling...");
                 return null;
             }
+
             var commonCharValue = GetCommonCharValue(commonChars.First());
             Printer.DebugMsg($"Common Character Value: [{commonCharValue}]");
             score += commonCharValue;
         }
+
         Printer.DebugMsg($"Your total score is {score}.");
         return score.ToString();
     }
 
     public override string? SecondPuzzle()
     {
-        var score = 0;
         // Groups of 3 lines have a common badge 
+        if (Data.Length % 3 != 0)
+        {
+            Printer.DebugMsg($"Data length is not divisible by 3, cancelling...");
+            return null;
+        }
+
+        var score = 0;
         var rucksackGroups = Data.Chunk(3).ToList();
         foreach (var group in rucksackGroups)
         {
@@ -47,10 +55,12 @@ public sealed class Day03 : PuzzleBaseLines
                 Printer.DebugMsg($"Too many common characters, cancelling...");
                 return null;
             }
+
             var commonCharValue = GetCommonCharValue(commonChars.First());
             Printer.DebugMsg($"Common Character Value: [{commonCharValue}]");
             score += commonCharValue;
         }
+
         Printer.DebugMsg($"Your total score is {score}.");
         return score.ToString();
     }
@@ -58,7 +68,7 @@ public sealed class Day03 : PuzzleBaseLines
     private static int GetCommonCharValue(char commonChar)
     {
         return char.IsUpper(commonChar)
-            ? commonChar - (int)'A' + 27
-            : commonChar - (int)'a' + 1;
+            ? commonChar - 'A' + 27
+            : commonChar - 'a' + 1;
     }
 }
