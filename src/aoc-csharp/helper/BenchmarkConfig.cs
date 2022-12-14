@@ -17,8 +17,13 @@ public class BenchmarkConfig : ManualConfig
         AddLogger(NullLogger.Instance);
         AddColumnProvider(DefaultColumnProviders.Instance);
         AddDiagnoser(MemoryDiagnoser.Default);
-        UnionRule = ConfigUnionRule.AlwaysUseLocal;
-        Options = ConfigOptions.DisableLogFile;
+        WithUnionRule(ConfigUnionRule.AlwaysUseLocal);
+        WithOption(ConfigOptions.LogBuildOutput, false);
+        WithOption(ConfigOptions.DisableLogFile, true);
+        WithOption(ConfigOptions.DisableOptimizationsValidator, true);
+        WithOption(ConfigOptions.KeepBenchmarkFiles, false);
+        WithOption(ConfigOptions.GenerateMSBuildBinLog, false);
+        WithArtifactsPath("../../dump/benchmarks/");
     }
 
     /** Gets all Benchmark classes */
