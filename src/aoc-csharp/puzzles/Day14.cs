@@ -22,14 +22,13 @@ public sealed class Day14 : PuzzleBaseLines
 
         var unitsOfSand = TrickleSand(caveDict, abyssLevel, false);
 
-        // // also print overflow
-        // var newSandUnit = sandComesInHere;
-        // newSandUnit = sandComesInHere;
-        // while (newSandUnit.Y < abyssLevel + 2)
-        // {
-        //     newSandUnit = FallOneStep(caveDict, newSandUnit);
-        //     caveDict[newSandUnit] = Overflow;
-        // }
+        // also print overflow
+        var overFlowUnit = SandTrickleStart;
+        while (overFlowUnit.Y < abyssLevel + 2)
+        {
+            overFlowUnit = FallOneStep(caveDict, overFlowUnit);
+            caveDict[overFlowUnit] = Overflow;
+        }
 
         Printer.DebugMsg($"Cave looks like this with all the sand:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
         Printer.DebugMsg($"There was {unitsOfSand} units of sand that landed in the cave");

@@ -33,6 +33,7 @@ public static class Config
     public const int MaxChallengeDays = 25;
     public const char LineArtChar = '-';
     public const string ImplementationNamespace = "aoc_csharp.puzzles";
+    public const string BenchmarkNamespace = "aoc_csharp.benchmarks";
     public const string DataFileNamingConvention = "day{0:D2}.txt";
     public const string DayMessageConvention = "Day {0:D2}";
 }

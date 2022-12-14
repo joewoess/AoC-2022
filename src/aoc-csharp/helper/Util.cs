@@ -18,12 +18,13 @@ public static class Util
     }
 
     /** Returns an enumerable of pairs between the elements of a collection */
-    //public static IEnumerable<(T From, T To)> PairWithNext<T>(this IEnumerable<T> collection) => collection.Zip(collection.Skip(1), (a, b) => (a, b));
+    public static IEnumerable<(T From, T To)> PairWithNextDeprecated<T>(this IEnumerable<T> collection) => collection.Zip(collection.Skip(1), (a, b) => (a, b));
 
     /** Returns an enumerable of pairs between the elements of a collection. Uses yield returns and a single enumeration */
     public static IEnumerable<(T From, T To)> PairWithNext<T>(this IEnumerable<T> collection)
     {
         using var enumerator = collection.GetEnumerator();
+        if(enumerator.MoveNext().Not()) yield break;
         var previous = enumerator.Current;
         while (enumerator.MoveNext())
         {
@@ -77,9 +78,10 @@ public static class Util
     public static bool IsNotNull<T>(this T? value) where T : class => value != null;
 
     /** Just checks if a string is not null or whitespace. Useful for linq */
-    public static bool HasContent(this string? value) => string.IsNullOrWhiteSpace(value);
+    public static bool HasContent(this string? value) => !string.IsNullOrWhiteSpace(value);
 
     /** Just negates a boolean. Useful for linq */
+    public static bool Not(this bool value) => !value;
     public static IEnumerable<TSource> WhereNot<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
         return source.Where(predicate.Invert());
