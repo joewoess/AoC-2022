@@ -15,6 +15,9 @@ public static class Util
             : Enumerable.Range(from, to - from + 1);
     }
 
+    /** Returns an enumerable of pairs between the elements of a collection */
+    public static IEnumerable<(T From, T To)> PairWithNext<T>(this IEnumerable<T> collection) => collection.Zip(collection.Skip(1), (a, b) => (a, b));
+
     /** Executes the action count times */
     public static void DoTimes(this int count, Action action)
     {

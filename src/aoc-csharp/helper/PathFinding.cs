@@ -3,9 +3,11 @@ namespace aoc_csharp.helper;
 public static class PathFinding
 {
     /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
-    public static IEnumerable<Point> WalkNoObstacles(Point from, Point to, bool allowDiagonal = true, bool preferDiagonal = true, bool preferHorizontal = true)
+    public static IEnumerable<Point> WalkNoObstacles(Point from, Point to, bool allowDiagonal = true, bool preferDiagonal = true, bool preferHorizontal = true, bool includeStart = false)
     {
         var currentPos = from;
+        if (includeStart)
+            yield return currentPos;
         while (currentPos != to)
         {
             currentPos = currentPos.StepTowards(to, allowDiagonal, preferDiagonal, preferHorizontal);

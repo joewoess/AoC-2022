@@ -85,4 +85,10 @@ public static class Grids
 
         return jaggedArray;
     }
+
+    /** Non-generic version of PointDictToGrid for getting a grid with empty spaces as emptySpace */ 
+    public static char[,] AsCharGrid(this Dictionary<Point, char> map, char emptySpace = '.')
+    {
+        return PointDictToGrid(map, c => c == 0 ? emptySpace : c);
+    }
 }
