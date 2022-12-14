@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace aoc_csharp.helper;
 
 using System.Numerics;
@@ -40,7 +42,8 @@ public static class Util
     }
 
     /** If a string has two value split by a separator, this parses it into a pair of 2 strings */
-    public static (TFirst First, TSecond Second) SplitAndMapToPair<TFirst, TSecond>(this string str, Func<string, TFirst> mapFirst, Func<string, TSecond> mapSecond, string separator = ",")
+    public static (TFirst First, TSecond Second) SplitAndMapToPair<TFirst, TSecond>(this string str, Func<string, TFirst> mapFirst, Func<string, TSecond> mapSecond,
+        string separator = ",")
     {
         var parts = str.Split(separator);
         switch (parts.Length)
@@ -72,6 +75,18 @@ public static class Util
 
     /** Just checks if a generic value is not null. Useful for linq */
     public static bool IsNotNull<T>(this T? value) where T : class => value != null;
+
     /** Just checks if a string is not null or whitespace. Useful for linq */
     public static bool HasContent(this string? value) => string.IsNullOrWhiteSpace(value);
+
+    /** Just negates a boolean. Useful for linq */
+    public static IEnumerable<TSource> WhereNot<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        return source.Where(predicate.Invert());
+    }
+
+    public static Func<TSource, bool> Invert<TSource>(this Func<TSource, bool> original)
+    {
+        return x => !original(x);
+    }
 }

@@ -2,7 +2,8 @@ namespace aoc_csharp.puzzles;
 
 public sealed class Day09 : PuzzleBaseLines
 {
-    private static readonly Point StartingPoint = new (0, 0);
+    private static readonly Point StartingPoint = new(0, 0);
+
     public override string? FirstPuzzle()
     {
         var instructions = Data
@@ -66,11 +67,10 @@ public sealed class Day09 : PuzzleBaseLines
 
             foreach (var _ in amountOfSteps)
             {
-                // TODO use pairwithnext
                 var nextRope = rope.ToArray();
                 nextRope[0] = rope[0].StepInDirection(dir.ParseDirection());
                 Util.Range(1, rope.Length - 1)
-                    .Where(idx => !nextRope[idx - 1].IsWithinReach(rope[idx]))
+                    .WhereNot(idx => nextRope[idx - 1].IsWithinReach(rope[idx]))
                     .ToList()
                     .ForEach(idx => nextRope[idx] = rope[idx].StepTowards(rope[idx - 1]));
                 rope = nextRope;
