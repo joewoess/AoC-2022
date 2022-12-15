@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace aoc_csharp.puzzles;
 
 public sealed class Day15 : PuzzleBaseLines
@@ -52,20 +54,44 @@ public sealed class Day15 : PuzzleBaseLines
         var maxCoord = Config.IsDemo ? 20 : 4_000_000;
         var tuningFrequencyMultiplier = 4_000_000;
 
-        for (int y = 0; y < maxCoord; y++) {
-            for (int x = 0; x < maxCoord; x++)
+        Printer.DebugMsg($"Finding the points just outside of each sensor's reach");
+
+        var borders = new List<Point>();
+        foreach (var (sensor, _, distance) in beaconData)
+        {
+            var justBeyondReach = distance + 1;
+            var cornerTop = new Point(sensor.X, sensor.Y - justBeyondReach);
+            var cornerBottom = new Point(sensor.X, sensor.Y + justBeyondReach);
+            var cornerLeft = new Point(sensor.X - justBeyondReach, sensor.Y);
+            var cornerRight = new Point(sensor.X + justBeyondReach, sensor.Y);
+
+            borders.AddRange(cornerTop.WalkDirectlyTowards(cornerLeft));
+            borders.AddRange(cornerLeft.WalkDirectlyTowards(cornerBottom));
+            borders.AddRange(cornerBottom.WalkDirectlyTowards(cornerRight));
+            borders.AddRange(cornerRight.WalkDirectlyTowards(cornerTop));
+        }
+
+        var borderPoints = borders
+            .Where(point => point.X >= 0 && point.X <= maxCoord && point.Y >= 0 && point.Y <= maxCoord)
+            .Distinct()
+            .ToList();
+
+        Printer.DebugMsg($"There are {borderPoints.Count} border points");
+
+        foreach (var point in borderPoints)
+        {
+            if (!beaconData.Any(pair =>
+                pair.Sensor == point || pair.Beacon == point
+                || pair.Sensor.ManhattanDistance(point) <= pair.Distance))
             {
-                var currentPoint = new Point(x, y);
-                if (beaconData.Any(pair => pair.Sensor == currentPoint || pair.Beacon == currentPoint)) continue;
-                if (beaconData.Any(pair => pair.Sensor.ManhattanDistance(currentPoint) <= pair.Distance).Not())
-                {
-                    var tuningFrequency = tuningFrequencyMultiplier * x + y;
-                    Printer.DebugMsg($"The only valid Position is at {currentPoint} with tuning frequency {tuningFrequency}");
-                    return tuningFrequency.ToString();
-                }
+
+                var tuningFrequency = BigInteger.Multiply(tuningFrequencyMultiplier, point.X) + point.Y;
+                Printer.DebugMsg($"The only valid Position is at {point} with tuning frequency {tuningFrequency}");
+                return tuningFrequency.ToString();
             }
         }
 
+        Printer.DebugMsg($"No valid position found");
         return null;
     }
 

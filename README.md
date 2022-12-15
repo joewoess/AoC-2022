@@ -24,7 +24,7 @@ All implemented solutions will be linked in the [Challenges table](##Challenges)
 | 12  | [Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) | [Csharp](src/aoc-csharp/puzzles/Day12.cs) | FSharp | Typescript | Rust | Python
 | 13  | [Distress Signal](https://adventofcode.com/2022/day/13) | [Csharp](src/aoc-csharp/puzzles/Day13.cs) | FSharp | Typescript | Rust | Python
 | 14  | [Regolith Reservoir](https://adventofcode.com/2022/day/14) | [Csharp](src/aoc-csharp/puzzles/Day14.cs) | FSharp | Typescript | Rust | Python
-| 15  | [Challenge 15](https://adventofcode.com/2022/day/15) | Csharp | FSharp | Typescript | Rust | Python
+| 15  | [Beacon Exclusion Zone](https://adventofcode.com/2022/day/15) | [Csharp](src/aoc-csharp/puzzles/Day15.cs) | FSharp | Typescript | Rust | Python
 | 16  | [Challenge 16](https://adventofcode.com/2022/day/16) | Csharp | FSharp | Typescript | Rust | Python
 | 17  | [Challenge 17](https://adventofcode.com/2022/day/17) | Csharp | FSharp | Typescript | Rust | Python
 | 18  | [Challenge 18](https://adventofcode.com/2022/day/18) | Csharp | FSharp | Typescript | Rust | Python
