@@ -10,62 +10,67 @@ public sealed class Day15 : PuzzleBaseLines
             .Select(line => (SensorPart: (line[2], line[3]), BeaconPart: (line[^2], line[^1])))
             .Select(line => (SensorCoord: line.SensorPart.MapPairWith(CleanNumber), BeaconCoord: line.BeaconPart.MapPairWith(CleanNumber)))
             .Select(line => (Sensor: new Point(line.SensorCoord.First, line.SensorCoord.Second), Beacon: new Point(line.BeaconCoord.First, line.BeaconCoord.Second)))
+            .Select(line => (Sensor: line.Sensor, Beacon: line.Beacon, Distance: line.Sensor.ManhattanDistance(line.Beacon)))
             .ToList();
 
-        var caveDict = InitCaveDictionary(beaconData);
-
-        Printer.DebugMsg($"Beacon response from cave looks like this:{Environment.NewLine}{caveDict.AsCharGrid().AsPrintable()}");
-
         var maxDistance = 0;
+        var minX = 0;
+        var maxX = 0;
 
-        foreach (var (sensor, beacon) in beaconData)
+        foreach (var (sensor, _, distance) in beaconData)
         {
-            maxDistance = beacon.ManhattanDistance(sensor);
-            for (int offsetY = -maxDistance; offsetY <= maxDistance; offsetY++)
-            {
-                var offsetLength = maxDistance - Math.Abs(offsetY);
-                for (int offsetX = -offsetLength; offsetX <= offsetLength; offsetX++)
-                {
-                    var currentPoint = new Point(sensor.X + offsetX, sensor.Y + offsetY);
-                    if (caveDict.ContainsKey(currentPoint)) continue;
-                    caveDict[currentPoint] = '#';
-                }
-            }
+            maxDistance = Math.Max(maxDistance, distance);
+            minX = Math.Min(minX, sensor.X);
+            maxX = Math.Max(maxX, sensor.X);
+        }
+
+        var coveredLine = 0;
+        var lineToCheck = Config.IsDemo ? 10 : 2_000_000;
+
+        for (int x = minX - maxDistance; x < maxX + maxDistance; x++)
+        {
+            var currentPoint = new Point(x, lineToCheck);
+            if (beaconData.Any(pair => pair.Sensor == currentPoint || pair.Beacon == currentPoint)) continue;
+            if (beaconData.Any(pair => pair.Sensor.ManhattanDistance(currentPoint) <= pair.Distance)) coveredLine++;
         }
 
         Printer.DebugMsg($"Pulsed the area for beacons");
-
-        var lineToCheck = Config.IsDemo ? 10 : 2_000_000;
-        var caveWithNotPossible = caveDict.AsCharGrid();
-        Printer.DebugMsg($"Covered areas in cave:{Environment.NewLine}{caveWithNotPossible.AsPrintable()}");
-
-        var line = string.Join("", caveDict.Where(entry => entry.Key.Y == lineToCheck).Select(entry => entry.Value).ToList());
-        Printer.DebugMsg($"Line y={lineToCheck} looks like this:{Environment.NewLine}{line}");
-
-        var positionsNotPossibleInLine = caveDict.Count(entry => entry.Key.Y == lineToCheck && entry.Value == '#');
-        Printer.DebugMsg($"There are {positionsNotPossibleInLine} positions not possible in line y={lineToCheck}");
-        return positionsNotPossibleInLine.ToString();
+        Printer.DebugMsg($"There are {coveredLine} positions not possible in line y={lineToCheck}");
+        return coveredLine.ToString();
     }
 
     public override string? SecondPuzzle()
     {
-        return null; ;
+        var beaconData = Data
+            .Select(line => line.Split(' '))
+            .Select(line => (SensorPart: (line[2], line[3]), BeaconPart: (line[^2], line[^1])))
+            .Select(line => (SensorCoord: line.SensorPart.MapPairWith(CleanNumber), BeaconCoord: line.BeaconPart.MapPairWith(CleanNumber)))
+            .Select(line => (Sensor: new Point(line.SensorCoord.First, line.SensorCoord.Second), Beacon: new Point(line.BeaconCoord.First, line.BeaconCoord.Second)))
+            .Select(line => (Sensor: line.Sensor, Beacon: line.Beacon, Distance: line.Sensor.ManhattanDistance(line.Beacon)))
+            .ToList();
+
+        var maxCoord = Config.IsDemo ? 20 : 4_000_000;
+        var tuningFrequencyMultiplier = 4_000_000;
+
+        for (int y = 0; y < maxCoord; y++) {
+            for (int x = 0; x < maxCoord; x++)
+            {
+                var currentPoint = new Point(x, y);
+                if (beaconData.Any(pair => pair.Sensor == currentPoint || pair.Beacon == currentPoint)) continue;
+                if (beaconData.Any(pair => pair.Sensor.ManhattanDistance(currentPoint) <= pair.Distance).Not())
+                {
+                    var tuningFrequency = tuningFrequencyMultiplier * x + y;
+                    Printer.DebugMsg($"The only valid Position is at {currentPoint} with tuning frequency {tuningFrequency}");
+                    return tuningFrequency.ToString();
+                }
+            }
+        }
+
+        return null;
     }
 
     private static int CleanNumber(string number)
     {
         return int.Parse(number.Substring(2).TrimEnd(',', ':'));
-    }
-    private static Dictionary<Point, char> InitCaveDictionary(List<(Point, Point)> beaconData)
-    {
-        var caveDict = new Dictionary<Point, char>();
-
-        foreach (var (sensor, beacon) in beaconData)
-        {
-            caveDict[sensor] = 'S';
-            caveDict[beacon] = 'B';
-        }
-
-        return caveDict;
     }
 }
