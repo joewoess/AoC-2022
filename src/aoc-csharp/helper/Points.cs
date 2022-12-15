@@ -21,6 +21,7 @@ public static class PointerExtensions
 {
     // stepping
 
+    /** Returns the next step in a given direction */
     public static Point StepInDirection(this Point currentPoint, Direction dir)
     {
         return dir switch
@@ -37,6 +38,7 @@ public static class PointerExtensions
         };
     }
 
+    /** Returns the next step between points with parameters concerning diagonals */
     public static Point StepTowards(this Point currentPoint, Point target, bool allowDiagonal = true, bool preferDiagonal = true, bool preferHorizontalOverVertical = true)
     {
         if (currentPoint == target) return currentPoint;
@@ -54,14 +56,17 @@ public static class PointerExtensions
         };
     }
 
+    /** Returns a char representation for the next step between points */
     public static char GetDirectionCharTowards(this Point currentPoint, Point target)
     {
-        return currentPoint.GetDirectionTowards(target) switch
+        return currentPoint.GetDirectionTowards(target).ParseCharFromDirection();
+    }
+
+    /** Parse char representation from a direction  */
+    public static char ParseCharFromDirection(this Direction direction)
+    {
+        return direction switch
         {
-            // Direction.Up => '↑',
-            // Direction.Down => '↓',
-            // Direction.Left => '←', // this one had issues in the console
-            // Direction.Right => '→',
             Direction.Up => '^',
             Direction.Down => 'v',
             Direction.Left => '<',
@@ -70,17 +75,18 @@ public static class PointerExtensions
             Direction.UpRight => '↗',
             Direction.DownLeft => '↙',
             Direction.DownRight => '↘',
-            _ => throw new Exception($"Unknown direction towards {target} from {currentPoint}")
+            _ => throw new Exception($"Unknown direction {direction}")
         };
     }
 
+    /** Returns direction to next step as a point clamped to (-1, 1) */
     private static Point CalculateStepTowards(this Point currentPoint, Point target)
     {
         var (xDiff, yDiff) = (target.X - currentPoint.X, target.Y - currentPoint.Y);
         return new Point(Math.Clamp(xDiff, -1, 1), Math.Clamp(yDiff, -1, 1));
     }
 
-    /** Returns an enumerable of points between from and to going preferring to go horizontal then diagonal then vertical */
+    /** Returns an enumerable of points between from and to */
     public static IEnumerable<Point> WalkDirectlyTowards(this Point from, Point to, bool allowDiagonal = true, bool preferDiagonal = true,
         bool preferHorizontal = true, bool includeStart = false)
     {
@@ -97,6 +103,7 @@ public static class PointerExtensions
 
     public static bool IsWithinReach(this Point currentPoint, Point target) => currentPoint.ChebyshevDistance(target) <= 1;
 
+    /** Gets Direction to another point. This prefers diagonals */
     public static Direction GetDirectionTowards(this Point currentPoint, Point target)
     {
         if (currentPoint == target) return Direction.Up;
@@ -113,7 +120,8 @@ public static class PointerExtensions
             _ => throw new Exception($"Unknown direction towards {target} from {currentPoint}")
         };
     }
-    
+
+    /** Parse direction from a char representation */
     public static Direction ParseDirection(this string direction)
     {
         return direction switch
@@ -128,6 +136,15 @@ public static class PointerExtensions
             "DR" or "↘" => Direction.DownRight,
             _ => throw new Exception($"Unknown direction {direction}")
         };
+    }
+
+    /** Returns the points neighbors of a given point */
+    public static IEnumerable<Point> GetNeighborPoints(this Point currentPoint, bool allowDiagonal = true)
+    {
+        var directions = allowDiagonal
+            ? new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight }
+            : new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right };
+        return directions.Select(dir => currentPoint.StepInDirection(dir));
     }
 
     // distances
@@ -148,13 +165,5 @@ public static class PointerExtensions
     public static int EuclideanDistance(this Point currentPoint, Point target)
     {
         return (int)Math.Sqrt(Math.Pow(currentPoint.X - target.X, 2) + Math.Pow(currentPoint.Y - target.Y, 2));
-    }
-
-    public static IEnumerable<Point> GetNeighborPoints(this Point currentPoint, bool allowDiagonal = true)
-    {
-        var directions = allowDiagonal
-            ? new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right, Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight }
-            : new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right };
-        return directions.Select(dir => currentPoint.StepInDirection(dir));
     }
 }

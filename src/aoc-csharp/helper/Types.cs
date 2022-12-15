@@ -6,6 +6,8 @@ public interface IPuzzle
     string TypeName => GetType().Name;
 
     bool WasInputSuccess();
+    bool FirstIsLongRunning();
+    bool SecondIsLongRunning();
 
     string FirstResult => WasInputSuccess() ? FirstPuzzle() ?? Config.NoResultMessage : Config.NoDataMessage;
     string SecondResult => WasInputSuccess() ? SecondPuzzle() ?? Config.NoResultMessage : Config.NoDataMessage;
@@ -24,7 +26,8 @@ public abstract class PuzzleBaseLines : IPuzzle
     {
         _input = this.GetInputLines();
     }
-
+    public virtual bool FirstIsLongRunning() => false;
+    public virtual bool SecondIsLongRunning() => false;
     public bool WasInputSuccess() => _input.Success;
     public abstract string? FirstPuzzle();
     public abstract string? SecondPuzzle();
@@ -40,7 +43,8 @@ public abstract class PuzzleBaseText : IPuzzle
     {
         _input = this.GetInput();
     }
-
+    public virtual bool FirstIsLongRunning() => false;
+    public virtual bool SecondIsLongRunning() => false;
     public bool WasInputSuccess() => _input.Success;
     public abstract string? FirstPuzzle();
     public abstract string? SecondPuzzle();
@@ -50,6 +54,8 @@ public abstract class PuzzleBaseText : IPuzzle
 public sealed class NoImplPuzzle : IPuzzle
 {
     public bool WasInputSuccess() => true;
+    public bool FirstIsLongRunning() => false;
+    public bool SecondIsLongRunning() => false;
     public string TypeName => Config.NoSolutionMessage;
     public string? FirstPuzzle() => Config.NoSolutionMessage;
     public string? SecondPuzzle() => Config.NoSolutionMessage;

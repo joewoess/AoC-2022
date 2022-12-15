@@ -82,11 +82,14 @@ public static class Util
 
     /** Just negates a boolean. Useful for linq */
     public static bool Not(this bool value) => !value;
+    
+    /** Where filter with inverted predicate */
     public static IEnumerable<TSource> WhereNot<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
         return source.Where(predicate.Invert());
     }
 
+    /** Inverts a predicate */
     public static Func<TSource, bool> Invert<TSource>(this Func<TSource, bool> original)
     {
         return x => !original(x);

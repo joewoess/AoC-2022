@@ -4,6 +4,7 @@ namespace aoc_csharp.helper;
 
 public static class Printer
 {
+    /** Column headers for the results table */
     private static IEnumerable<(string Message, int Padding)> ColumnHeaders { get; } = new[]
     {
         ("Day", Config.InfoColumnPadding),
@@ -49,8 +50,8 @@ public static class Printer
         var implementationsOfDay = Puzzles.PuzzleImplementationDict[day];
         foreach (var impl in implementationsOfDay)
         {
-            var firstPuzzle = Config.ShowFirst ? impl.FirstResult : Config.SkippedMessage;
-            var secondPuzzle = Config.ShowSecond ? impl.SecondResult : Config.SkippedMessage;
+            var firstPuzzle = Config.ShowFirst && !(Config.SkipLongRunning && impl.FirstIsLongRunning()) ? impl.FirstResult : Config.SkippedMessage;
+            var secondPuzzle = Config.ShowSecond && !(Config.SkipLongRunning && impl.SecondIsLongRunning()) ? impl.SecondResult : Config.SkippedMessage;
 
             var columnsToPrint = new (string Message, int Padding)[]
             {

@@ -31,7 +31,7 @@ public static class PathFinding
 
     // A* implementation
 
-    public sealed class Field
+    private sealed class Field
     {
         public Point Position { get; init; }
         public int Cost { get; init; }
@@ -93,7 +93,7 @@ public static class PathFinding
     }
 
     /** Reconstructs the path from the end to the start */
-    public static List<Point> ReconstructPath(Field current)
+    private static List<Point> ReconstructPath(Field current)
     {
         var path = new List<Point>();
         while (current.Parent != null)

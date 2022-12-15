@@ -10,6 +10,7 @@ Config.ShowFirst = !args.Contains("--second") || args.Contains("--first");
 Config.ShowSecond = !args.Contains("--first") || args.Contains("--second");
 Config.OnlyTestCode = args.Contains("--test");
 Config.RunBenchmarks = args.Contains("--bench") || args.Contains("--benchmark");
+Config.SkipLongRunning = args.Contains("--quick");
 Config.IsInRelease = BenchmarkConfig.IsInReleaseConfiguration();
 
 var explicitDaysRequested = args
@@ -20,7 +21,8 @@ var explicitDaysRequested = args
 
 var longestMessage =
     $"IsDemo: {Config.IsDemo} | IsDebug: {Config.IsDebug} | ShowLast: {Config.ShowLast} | ShowFirst: {Config.ShowFirst} | ShowSecond: {Config.ShowSecond} |"
-    + $" ExplicitDays: [{string.Join(",", explicitDaysRequested)}] | IsInRelease: {Config.IsInRelease} | OnlyTestCode: {Config.OnlyTestCode} | RunBenchmarks: {Config.RunBenchmarks}";
+    + $" ExplicitDays: [{string.Join(",", explicitDaysRequested)}] | IsInRelease: {Config.IsInRelease} | OnlyTestCode: {Config.OnlyTestCode} | RunBenchmarks: {Config.RunBenchmarks} |"
+    + $" SkipLongRunning: {Config.SkipLongRunning}";
 
 Printer.ConsoleWidth = longestMessage.Length;
 if (Config.TryAndUseConsoleWidth) Printer.TryUpdateConsoleWidth();

@@ -12,6 +12,7 @@ public static class Puzzles
             .Cast<IPuzzle>()
             .ToList();
 
+    /** Static placeholder if there is no implementation */
     public static NoImplPuzzle NoImplementation { get; } = new();
 
     /** Instance the type found by reflection */
@@ -27,6 +28,7 @@ public static class Puzzles
             .OrderBy(t => t.Name);
     }
 
+    /** Group the puzzles by day */
     public static Dictionary<int, List<IPuzzle>> PuzzleImplementationDict { get; } =
         Util.Range(1, Config.MaxChallengeDays)
             .ToDictionary(
@@ -35,5 +37,6 @@ public static class Puzzles
                     .Where(puzzle => ParseDay(puzzle.TypeName) == day)
                     .ToList());
 
+    /** Parse the day integer from a typename */
     private static int? ParseDay(string input) => int.TryParse(string.Join("", input.Where(char.IsDigit)), out var day) ? day : null;
 }

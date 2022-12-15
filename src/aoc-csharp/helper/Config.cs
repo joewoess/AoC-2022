@@ -17,6 +17,7 @@ public static class Config
     public static bool IsInRelease = false;
     public static bool OnlyTestCode = false;
     public static bool RunBenchmarks = false;
+    public static bool SkipLongRunning = false;
 
     public static readonly bool TryAndUseConsoleWidth = false;
     public static readonly bool PrintAfterLastImpl = false;

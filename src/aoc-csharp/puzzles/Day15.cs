@@ -4,7 +4,8 @@ namespace aoc_csharp.puzzles;
 
 public sealed class Day15 : PuzzleBaseLines
 {
-
+    public override bool FirstIsLongRunning() => true;
+    public override bool SecondIsLongRunning() => true;
     public override string? FirstPuzzle()
     {
         var beaconData = Data

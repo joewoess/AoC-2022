@@ -1,8 +1,8 @@
-using System.Numerics;
 namespace aoc_csharp.puzzles;
 
 public sealed class Day12 : PuzzleBaseLines
 {
+    public override bool SecondIsLongRunning() => true;
     private int MapHeight => Data.Length;
     private int MapWidth => Data[0].Length;
 
