@@ -6,6 +6,7 @@ public sealed class Day15 : PuzzleBaseLines
 {
     public override bool FirstIsLongRunning() => true;
     public override bool SecondIsLongRunning() => true;
+
     public override string? FirstPuzzle()
     {
         var beaconData = Data
@@ -81,15 +82,11 @@ public sealed class Day15 : PuzzleBaseLines
 
         foreach (var point in borderPoints)
         {
-            if (!beaconData.Any(pair =>
-                pair.Sensor == point || pair.Beacon == point
-                || pair.Sensor.ManhattanDistance(point) <= pair.Distance))
-            {
+            if (beaconData.Any(pair => pair.Sensor.ManhattanDistance(point) <= pair.Distance)) continue;
 
-                var tuningFrequency = BigInteger.Multiply(tuningFrequencyMultiplier, point.X) + point.Y;
-                Printer.DebugMsg($"The only valid Position is at {point} with tuning frequency {tuningFrequency}");
-                return tuningFrequency.ToString();
-            }
+            var tuningFrequency = BigInteger.Multiply(tuningFrequencyMultiplier, point.X) + point.Y;
+            Printer.DebugMsg($"The only valid Position is at {point} with tuning frequency {tuningFrequency}");
+            return tuningFrequency.ToString();
         }
 
         Printer.DebugMsg($"No valid position found");

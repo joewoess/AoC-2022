@@ -76,7 +76,7 @@ if (Config.RunBenchmarks)
 }
 
 // Run the actual program
-Printer.DebugMsg($"Found {Puzzles.ImplementedPuzzles.Count} implementations");
+Printer.DebugMsg($"Found {Puzzles.ImplementedPuzzles().Count} implementations");
 Printer.PrintSeparator(onlyDuringDebug: true);
 Printer.PrintResultHeader();
 

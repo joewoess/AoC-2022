@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-
 namespace aoc_csharp.helper;
 
 using System.Numerics;
@@ -24,7 +22,7 @@ public static class Util
     public static IEnumerable<(T From, T To)> PairWithNext<T>(this IEnumerable<T> collection)
     {
         using var enumerator = collection.GetEnumerator();
-        if(enumerator.MoveNext().Not()) yield break;
+        if (enumerator.MoveNext().Not()) yield break;
         var previous = enumerator.Current;
         while (enumerator.MoveNext())
         {
@@ -82,7 +80,7 @@ public static class Util
 
     /** Just negates a boolean. Useful for linq */
     public static bool Not(this bool value) => !value;
-    
+
     /** Where filter with inverted predicate */
     public static IEnumerable<TSource> WhereNot<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {

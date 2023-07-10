@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace aoc_csharp.helper;
 
 public static class Printer
@@ -47,7 +45,7 @@ public static class Printer
     /** Prints the result of a days puzzle in the result table */
     public static void PrintSolutionMessage(int day)
     {
-        var implementationsOfDay = Puzzles.PuzzleImplementationDict[day];
+        var implementationsOfDay = Puzzles.PuzzleImplementationDict()[day];
         foreach (var impl in implementationsOfDay)
         {
             var firstPuzzle = Config.ShowFirst && !(Config.SkipLongRunning && impl.FirstIsLongRunning()) ? impl.FirstResult : Config.SkippedMessage;
@@ -70,17 +68,17 @@ public static class Printer
     {
         if (!Config.PrintAfterLastImpl)
         {
-            var lastDay = Puzzles.PuzzleImplementationDict
+            var lastDay = Puzzles.PuzzleImplementationDict()
                 .Last(entry => !(entry.Value.Count > 0 && entry.Value.First() == Puzzles.NoImplementation))
                 .Key;
-            Puzzles.PuzzleImplementationDict.Keys
+            Puzzles.PuzzleImplementationDict().Keys
                 .Where(day => day <= lastDay)
                 .ToList()
                 .ForEach(PrintSolutionMessage);
         }
         else
         {
-            Puzzles.PuzzleImplementationDict.Keys
+            Puzzles.PuzzleImplementationDict().Keys
                 .ToList()
                 .ForEach(PrintSolutionMessage);
         }
@@ -89,7 +87,7 @@ public static class Printer
     /** Prints the result of the last day with an implementation in the result table */
     public static void PrintLastSolutionMessage()
     {
-        var lastDay = Puzzles.PuzzleImplementationDict
+        var lastDay = Puzzles.PuzzleImplementationDict()
             .Last(entry => entry.Value.Count > 0 && entry.Value.FirstOrDefault() != Puzzles.NoImplementation)
             .Key;
         PrintSolutionMessage(lastDay);
